@@ -1,0 +1,39 @@
+
+<ion-content>
+
+  <div *ngIf="isLoading">
+    <ion-list>
+      <ion-card *ngFor="let i of [1, 2, 3]">
+        <ion-card-header>
+          <ion-skeleton-text [animated]="true" style="width: 80%"></ion-skeleton-text>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-skeleton-text [animated]="true" style="width: 100%"></ion-skeleton-text>
+          <ion-skeleton-text [animated]="true" style="width: 60%"></ion-skeleton-text>
+        </ion-card-content>
+      </ion-card>
+    </ion-list>
+  </div>
+
+  <div *ngIf="!isLoading">
+
+    <div *ngIf="blogs.length === 0" class="ion-text-center ion-padding">
+      <h3>¡Bienvenido!</h3>
+      <p>Aún no hay blogs publicados. ¡Sé el primero en escribir uno!</p>
+    </div>
+
+    <ion-list *ngIf="blogs.length > 0">
+      <ion-card *ngFor="let blog of blogs" (click)="viewBlogDetail(blog._id)" button>
+        <ion-card-header>
+          <ion-card-title>{{ blog.title }}</ion-card-title>
+          <ion-card-subtitle>Por: {{ blog.author_id }} | {{ blog.created_at | date }}</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          {{ blog.content | slice:0:150 }}...
+        </ion-card-content>
+      </ion-card>
+    </ion-list>
+
+  </div>
+
+</ion-content>

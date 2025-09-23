@@ -1,0 +1,46 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ view === 'login' ? 'Iniciar Sesión' : (view === 'register' ? 'Crear Cuenta' : 'Verificar Correo') }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">Cerrar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <div *ngIf="view === 'login'">
+    <ion-button expand="block" (click)="loginWithGoogle()">
+      <ion-icon name="logo-google" slot="start"></ion-icon>
+      Continuar con Google
+    </ion-button>
+    <ion-button expand="block" color="facebook" (click)="loginWithFacebook()">
+      <ion-icon name="logo-facebook" slot="start"></ion-icon>
+      Continuar con Facebook
+    </ion-button>
+    <p class="ion-text-center">
+      ¿No tienes cuenta? <a (click)="changeView('register')">Regístrate</a>
+    </p>
+  </div>
+
+  <div *ngIf="view === 'register'">
+    <ion-button expand="block" (click)="registerWithGoogle()">
+      <ion-icon name="logo-google" slot="start"></ion-icon>
+      Registrarse con Google
+    </ion-button>
+    <ion-button expand="block" color="facebook" (click)="registerWithFacebook()">
+      <ion-icon name="logo-facebook" slot="start"></ion-icon>
+      Registrarse con Facebook
+    </ion-button>
+    <p class="ion-text-center">
+      ¿Ya tienes cuenta? <a (click)="changeView('login')">Inicia Sesión</a>
+    </p>
+  </div>
+
+  <div *ngIf="view === 'verify'">
+    <p>Te hemos enviado un código a tu correo. Ingrésalo a continuación:</p>
+    <ion-input label="Código" labelPlacement="floating" fill="outline"></ion-input>
+    <ion-button expand="block" (click)="verifyCode()">Verificar y Continuar</ion-button>
+  </div>
+
+</ion-content>
