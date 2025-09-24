@@ -16,6 +16,14 @@
   </div>
 
   <div *ngIf="!isLoading">
+     <ion-card class="create-post-card" (click)="openCreateBlogModal()" button>
+      <ion-item lines="none">
+        <ion-avatar slot="start">
+          <img src="assets/images/avatar.png" />
+        </ion-avatar>
+        <ion-label>¿En qué estás pensando?</ion-label>
+      </ion-item>
+    </ion-card>
 
     <div *ngIf="blogs.length === 0" class="ion-text-center ion-padding">
       <h3>¡Bienvenido!</h3>

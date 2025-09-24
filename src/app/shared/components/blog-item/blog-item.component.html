@@ -1,3 +1,28 @@
-<p>
-  blog-item works!
-</p>
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ blog ? blog.title : 'Cargando...' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div *ngIf="isLoading">
+    <ion-skeleton-text [animated]="true" style="width: 80%; height: 30px;"></ion-skeleton-text>
+    <ion-skeleton-text [animated]="true" style="width: 50%;"></ion-skeleton-text>
+    <br>
+    <ion-skeleton-text [animated]="true" style="width: 100%; height: 200px;"></ion-skeleton-text>
+  </div>
+
+  <div *ngIf="!isLoading && blog">
+    <h1>{{ blog.title }}</h1>
+    <p class="subtitle">Por: {{ blog.author_id }} | Publicado el: {{ blog.created_at | date:'longDate' }}</p>
+
+    <div *ngIf="blog.images && blog.images.length > 0">
+      <ion-img *ngFor="let imageUrl of blog.images" [src]="imageUrl" alt="Imagen del blog"></ion-img>
+    </div>
+
+    <div class="blog-content" [innerHTML]="blog.content"></div>
+  </div>
+</ion-content>

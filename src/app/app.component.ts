@@ -7,7 +7,7 @@ import { MenuComponent } from './shared/components/menu/menu.component';
 import { addIcons } from 'ionicons';
 
 // 2. Importa los íconos que vas a usar (usa el nombre en camelCase)
-import { homeOutline, personOutline, createOutline, settingsOutline, menuOutline } from 'ionicons/icons';
+import { homeOutline, personOutline, createOutline, settingsOutline, menuOutline, logOutOutline, personCircleOutline, searchOutline, logInOutline, logoFacebook, logoGoogle } from 'ionicons/icons';
 
 
 @Component({
@@ -18,7 +18,7 @@ import { homeOutline, personOutline, createOutline, settingsOutline, menuOutline
   imports: [
     IonicModule,
     MenuComponent,
-    HeaderComponent,
+    HeaderComponent,  
   ],
 })
 export class AppComponent {
@@ -33,6 +33,12 @@ export class AppComponent {
       'create-outline': createOutline,
       'settings-outline': settingsOutline,
       'menu-outline': menuOutline,
+      'log-in-outline': logInOutline,           // <-- Añadido
+      'search-outline': searchOutline,         // <-- Añadido
+      'person-circle-outline': personCircleOutline, // <-- Añadido
+      'log-out-outline': logOutOutline,
+      'logo-facebook': logoFacebook,
+      'logo-google': logoGoogle,
       // ...agrega aquí cualquier otro ícono que necesites en tu app
     });
   }

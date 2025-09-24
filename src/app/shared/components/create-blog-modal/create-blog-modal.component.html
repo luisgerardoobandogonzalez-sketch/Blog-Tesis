@@ -1,0 +1,54 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Crear Nuevo Blog</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list>
+    <ion-item>
+      <ion-input
+        label="Título"
+        labelPlacement="floating"
+        placeholder="Un título increíble"
+        [(ngModel)]="blogData.title"
+        required>
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-textarea
+        label="Contenido"
+        labelPlacement="floating"
+        placeholder="Escribe tu historia aquí..."
+        [autoGrow]="true"
+        [(ngModel)]="blogData.content"
+        required>
+      </ion-textarea>
+    </ion-item>
+
+    <ion-item>
+       <ion-select label="Carrera Asociada" placeholder="Selecciona una" [(ngModel)]="blogData.career">
+        <ion-select-option value="Ingenieria de Sistemas">Ingeniería de Sistemas</ion-select-option>
+        <ion-select-option value="Derecho">Derecho</ion-select-option>
+        <ion-select-option value="Medicina">Medicina</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-input
+        label="Etiquetas"
+        labelPlacement="floating"
+        placeholder="Ej: angular, ionic, desarrollo (separadas por coma)"
+        [(ngModel)]="blogData.tagsInput">
+      </ion-input>
+    </ion-item>
+  </ion-list>
+
+  <ion-button expand="block" (click)="publish()" [disabled]="!blogData.title || !blogData.content" class="ion-margin-top">
+    Publicar
+  </ion-button>
+</ion-content>

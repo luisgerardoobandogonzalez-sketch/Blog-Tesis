@@ -16,6 +16,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/settings/settings.page').then(m => m.SettingsPage),
     canActivate: [AuthGuard] // Protegemos la ruta de configuración
   },
+   {
+    path: 'blog/:id', // ':id' es un parámetro que contendrá el ID del blog
+    loadComponent: () => import('./shared/components/blog-item/blog-item.component').then( m => m.BlogItemComponent)
+  },
   {
     path: '',
     redirectTo: 'home',

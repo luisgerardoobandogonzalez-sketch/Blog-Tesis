@@ -1,93 +1,143 @@
-import { Component, OnInit } from '@angular/core';
-import { IonHeader, IonToolbar,IonTitle, IonButton, IonContent, IonIcon  } from "@ionic/angular/standalone";
-import { IonicModule } from '@ionic/angular';
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { IonicModule, ModalController } from '@ionic/angular';
+import { FormsModule } from '@angular/forms'; // <-- Importante para [(ngModel)]
+import { AuthService } from 'src/app/core/services/auth';
+import { AlertController } from '@ionic/angular';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-auth-modal',
   templateUrl: './auth-modal.component.html',
   styleUrls: ['./auth-modal.component.scss'],
-  imports: [IonHeader, IonToolbar, IonTitle, IonButton, IonContent, IonIcon,IonicModule],
+  standalone: true,
+  imports: [ IonicModule, CommonModule, FormsModule ], // <-- Añade FormsModule
 })
-export class AuthModalComponent  implements OnInit {
-
-  constructor(/* private modalCtrl: ModalController */) { }
-
-  ngOnInit() {}
-
-  // Controla qué vista se muestra: 'login', 'register', o 'verify'
+export class AuthModalComponent {
   view: 'login' | 'register' | 'verify' = 'login';
 
+  // Objeto para almacenar los datos del formulario de login
+  credentials = {
+    email: '',
+    password: ''
+  };
 
+   registrationData = {
+    firstName: '',
+    lastName: '',
+    birthDate: '',
+    gender: '', // Nuevo campo
+    email: '',
+    password: ''
+  };
 
-  // Cambia entre las vistas del modal
+   constructor(
+    private modalCtrl: ModalController,
+    private authService: AuthService,
+    private alertCtrl: AlertController, // <-- Inyéctalo aquí
+    private router: Router // <-- Inyéctalo aquí
+  ) {}
+
+  dismiss() {
+    this.modalCtrl.dismiss();
+  }
+
   changeView(newView: 'login' | 'register' | 'verify') {
     this.view = newView;
   }
 
-  // Cierra el modal
-  dismiss() {
-    //this.modalCtrl.dismiss();
-  }
-
   // --- Lógica de Frontend para la autenticación ---
-  // El backend hace el trabajo pesado, el frontend solo inicia el proceso
-
-  // Para Google/Facebook:
-  // 1. Llamarías a una librería de Capacitor/Cordova o una SDK web.
-  // 2. Esta te devolverá un "token de acceso" o "código de autorización".
-  // 3. Envías ese token/código a tu backend.
-  // 4. Tu backend lo valida con Google/Facebook, crea el usuario si no existe,
-  //    genera un token JWT propio y te lo devuelve.
+  
+   loginWithEmail() {
+    // 3. Llama al método login del servicio
+    this.authService.login(this.credentials).subscribe({
+      next: (success) => {
+        if (success) {
+          console.log('Login simulado exitoso!');
+          // 4. Si el login es exitoso, cierra el modal
+          this.modalCtrl.dismiss({ loggedIn: true });
+        }
+      },
+      error: (err) => {
+        console.error('Error en el login simulado', err);
+        // Aquí podrías mostrar una alerta de error
+      }
+    });
+  }
 
   loginWithGoogle() {
     console.log('Iniciando sesión con Google...');
-    // Aquí iría la lógica para llamar a la API de Google
-    // al tener exito this.authService.handleLogin(response);
-    // y this.dismiss();
+    // Lógica para llamar a la SDK de Google
   }
 
   loginWithFacebook() {
     console.log('Iniciando sesión con Facebook...');
-    // Aquí iría la lógica para llamar a la API de Facebook
-    // al tener exito this.authService.handleLogin(response);
-    // y this.dismiss();
+    // Lógica para llamar a la SDK de Facebook
   }
 
-  // ... métodos similares para loginWithFacebook, registerWithEmail, etc.
+  async registerWithEmail() {
+    // 1. Validación de Fecha de Nacimiento
+    if (!this.registrationData.birthDate) {
+      this.showAlert('Error', 'Debes seleccionar tu fecha de nacimiento.');
+      return;
+    }
 
-  registerWithEmail() {
-    // 1. Recolectas email/password del formulario.
-    // 2. Lo envías a tu endpoint de registro en el backend.
-    // 3. El backend crea el usuario (con is_verified=false), genera un código
-    //    y envía el correo.
-    // 4. Si la respuesta del backend es exitosa, cambias la vista.
-    this.changeView('verify');
+    const birthDate = new Date(this.registrationData.birthDate);
+    const today = new Date();
+    const age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+      // Si el cumpleaños de este año aún no ha pasado, resta un año
+      if (age - 1 < 18) {
+        this.showAlert('Edad no permitida', 'Debes ser mayor de 18 años para registrarte.');
+        return;
+      }
+    } else if (age < 18) {
+      this.showAlert('Edad no permitida', 'Debes ser mayor de 18 años para registrarte.');
+      return;
+    }
+    
+    // 2. Simulación de Registro Exitoso
+    console.log('Registro válido. Guardando datos para prueba...');
+
+    // Crea el perfil del usuario con los datos del formulario
+    const userProfile = {
+      id: `user_${Date.now()}`, // ID de usuario falso
+      ...this.registrationData
+    };
+    delete (userProfile as any).password; // Nunca guardes la contraseña
+
+    // Simula la creación de un token JWT
+    const fakeToken = btoa(JSON.stringify({ userId: userProfile.id }));
+
+    // 3. Guarda todo en localStorage
+    localStorage.setItem('auth_token', fakeToken);
+    localStorage.setItem('user_profile', JSON.stringify(userProfile));
+
+    // 4. Actualiza el estado de la app y redirige
+    // (Llamamos a 'checkToken' del servicio para que actualice el estado)
+    (this.authService as any).checkToken(); 
+    
+    await this.modalCtrl.dismiss();
+    this.router.navigate(['/home']);
   }
 
-   registerWithGoogle() {
-    // 1. Recolectas email/password del formulario.
-    // 2. Lo envías a tu endpoint de registro en el backend.
-    // 3. El backend crea el usuario (con is_verified=false), genera un código
-    //    y envía el correo.
-    // 4. Si la respuesta del backend es exitosa, cambias la vista.
-    this.changeView('verify');
+  // Función de ayuda para mostrar alertas
+  async showAlert(header: string, message: string) {
+    const alert = await this.alertCtrl.create({
+      header,
+      message,
+      buttons: ['OK'],
+    });
+    await alert.present();
   }
 
-   registerWithFacebook() {
-    // 1. Recolectas email/password del formulario.
-    // 2. Lo envías a tu endpoint de registro en el backend.
-    // 3. El backend crea el usuario (con is_verified=false), genera un código
-    //    y envía el correo.
-    // 4. Si la respuesta del backend es exitosa, cambias la vista.
-    this.changeView('verify');
-  }
+ registerWithGoogle(){
+  console.log("Registrando se con Google");
+ }
 
-  verifyCode() {
-    // 1. Recolectas el código del input.
-    // 2. Lo envías a tu endpoint de verificación en el backend junto con el email.
-    // 3. El backend valida el código. Si es correcto, pone is_verified=true,
-    //    genera el JWT y te lo devuelve.
-    // 4. Manejas el login en el frontend y cierras el modal.
+  registerWithFacebook(){
+    console.log("Registrando se con Facebook");
   }
-
 }

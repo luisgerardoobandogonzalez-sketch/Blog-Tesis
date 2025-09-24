@@ -5,8 +5,10 @@ import { Router } from '@angular/router';
 // Importa IonicModule para usar todos los componentes de Ionic
 import { IonicModule, MenuController, ModalController } from '@ionic/angular';
 import { Observable } from 'rxjs';
+import { take } from 'rxjs/operators'; // <-- Importa 'take' de RxJS
 import { AuthService } from 'src/app/core/services/auth';
 import { AuthModalComponent } from '../auth-modal/auth-modal.component';
+import { CreateBlogModalComponent } from '../create-blog-modal/create-blog-modal.component'; // <-- 1. Importa el nuevo modal
 
 @Component({
   selector: 'app-menu',
@@ -50,5 +52,26 @@ export class MenuComponent {
       this.router.navigate([path]);
       this.menuCtrl.close();
     }
+  }
+
+    async openCreateBlogModal() {
+    // Primero, cerramos el menú para una mejor experiencia de usuario
+    await this.menuCtrl.close();
+
+    this.isAuthenticated$.pipe(take(1)).subscribe(async (isAuth) => {
+      if (isAuth) {
+        // Si el usuario está autenticado, abre el modal para crear el blog
+        const modal = await this.modalCtrl.create({
+          component: CreateBlogModalComponent,
+        });
+        await modal.present();
+      } else {
+        // Si no, abre el modal de inicio de sesión
+        const modal = await this.modalCtrl.create({
+          component: AuthModalComponent,
+        });
+        await modal.present();
+      }
+    });
   }
 }

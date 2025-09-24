@@ -1,49 +1,72 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, of, tap } from 'rxjs'; // Importa 'of' y 'tap'
+import { User } from 'src/app/shared/models/user.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  // BehaviorSubject para mantener el estado de autenticación.
-  // Inicia en 'false' (no autenticado).
   private isAuthenticated = new BehaviorSubject<boolean>(false);
-
-  // Observable público para que los componentes se suscriban.
   public isAuthenticated$ = this.isAuthenticated.asObservable();
 
   constructor(private router: Router) {
-    // Podrías añadir lógica aquí para comprobar si ya existe un token en localStorage
-    // y auto-loguear al usuario al recargar la página.
+    // Comprueba si ya existe un token al cargar la app
+    this.checkToken();
   }
 
-  // Este método se llamaría después de una respuesta exitosa del backend
-  login(token: string, userData: any) {
-    // 1. Guardar el token (JWT) de forma segura (LocalStorage o preferiblemente Capacitor Secure Storage)
-    localStorage.setItem('auth_token', token);
+  private checkToken() {
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      this.isAuthenticated.next(true);
+    }
+  }
 
-    // 2. Guardar datos del usuario si es necesario
-    localStorage.setItem('user_data', JSON.stringify(userData));
+  // --- MÉTODO ACTUALIZADO ---
+  // Ahora acepta credenciales (aunque no las usaremos para la simulación)
+  login(credentials: { email: string, password: string }): Observable<boolean> {
+    console.log('Simulando login para:', credentials.email);
 
-    // 3. Notificar a toda la app que el usuario está autenticado
+    // 1. Crea un token JWT falso. En una app real, esto vendría del backend.
+    // Un JWT simple tiene 3 partes separadas por puntos.
+    const fakeHeader = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+    const fakePayload = btoa(JSON.stringify({ userId: '123', email: credentials.email, exp: Math.floor(Date.now() / 1000) + 3600 }));
+    const fakeSignature = 'fake-signature-for-testing'; // Esto no es seguro, solo para simulación
+    const fakeToken = `${fakeHeader}.${fakePayload}.${fakeSignature}`;
+
+    // 2. Guarda el token en el localStorage del navegador
+    localStorage.setItem('auth_token', fakeToken);
+
+    const fakeUserProfile = {
+      firstName: 'Samantha',
+      lastName: 'Jiménez',
+      email: credentials.email,
+      birthDate: '1998-05-15T00:00:00Z',
+      profilePictureUrl: '/assets/images/avatar.png' // Una imagen de avatar de ejemplo
+    };
+    localStorage.setItem('user_profile', JSON.stringify(fakeUserProfile));
+
+    // 3. Notifica a toda la app que el usuario está autenticado
     this.isAuthenticated.next(true);
 
-    // 4. (Opcional) Redirigir al usuario a una página de bienvenida o su perfil
-    this.router.navigate(['/profile']);
+    // 4. Devuelve un Observable que emite 'true' para simular una respuesta exitosa de la API
+    return of(true).pipe(
+      tap(() => this.router.navigate(['/profile'])) // Redirige al perfil después del login exitoso
+    );
+  }
+
+   getUserProfile(): User | null {
+    const profile = localStorage.getItem('user_profile');
+    return profile ? JSON.parse(profile) : null;
   }
 
   logout() {
-    // 1. Limpiar el almacenamiento local
     localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_data');
-
-    // 2. Notificar a toda la app que el usuario ya no está autenticado
+    localStorage.removeItem('user_profile');
     this.isAuthenticated.next(false);
-
-    // 3. Redirigir al usuario a la página de inicio.
-    // El 'replaceUrl: true' es CRUCIAL. Evita que el usuario pueda usar
-    // el botón "atrás" del navegador para volver a una ruta protegida.
     this.router.navigate(['/home'], { replaceUrl: true });
   }
+
+ 
+  
 }

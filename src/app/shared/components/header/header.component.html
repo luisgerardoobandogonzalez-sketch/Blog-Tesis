@@ -3,6 +3,40 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
+
     <ion-title>Mi Blog</ion-title>
-    </ion-toolbar>
+
+    <ion-buttons slot="end">
+      
+      <ng-container *ngIf="!(isAuthenticated$ | async)">
+        <ion-button (click)="openAuthModal()">
+          <ion-icon slot="start" name="log-in-outline"></ion-icon>
+      
+          Iniciar Sesión
+        </ion-button>
+      </ng-container>
+
+      <ng-container *ngIf="isAuthenticated$ | async">
+        <ion-button (click)="navigateToSearch()">
+          <ion-icon slot="icon-only" name="search-outline"></ion-icon>
+        </ion-button>
+        
+        <ion-button (click)="openCreateBlogModal()">
+          <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+        </ion-button>
+
+        <ion-button (click)="viewProfile('/profile', true)">
+          <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
+        </ion-button>
+
+         <ion-button (click)="logout()" color="danger">
+      <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
+    </ion-button>
+    
+      </ng-container>
+
+      
+      
+    </ion-buttons>
+  </ion-toolbar>
 </ion-header>
