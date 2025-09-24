@@ -10,9 +10,7 @@
 <ion-content class="ion-padding">
   <div *ngIf="userProfile" class="profile-container">
     
-    <ion-avatar class="profile-avatar">
-      <img [src]="userProfile.profilePictureUrl || 'assets/images/avatar.png'" alt="Foto de perfil">
-    </ion-avatar>
+   >
 
     <h1 class="profile-name">{{ userProfile.firstName }} {{ userProfile.lastName }}</h1>
     
@@ -33,12 +31,6 @@
             <ion-label>
               <h2>Apellido</h2>
               <p>{{ userProfile.lastName }}</p>
-            </ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-label>
-              <h2>Fecha de Nacimiento</h2>
-              <p>{{ userProfile.birthDate | date:'longDate':'es-GT' }}</p>
             </ion-label>
           </ion-item>
         <ion-item *ngIf="userProfile.gender">

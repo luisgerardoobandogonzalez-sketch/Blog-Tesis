@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, of, tap } from 'rxjs'; // Importa 'of' y 'tap'
-import { User } from 'src/app/shared/models/user.model';
+import { Models } from 'src/app/shared/models/models';
 
 @Injectable({
   providedIn: 'root'
@@ -9,53 +9,47 @@ import { User } from 'src/app/shared/models/user.model';
 export class AuthService {
   private isAuthenticated = new BehaviorSubject<boolean>(false);
   public isAuthenticated$ = this.isAuthenticated.asObservable();
+    // --- NUEVO: Subject para manejar el rol del usuario ---
+  private userRole = new BehaviorSubject<'admin' | 'user' | null>(null);
+  public userRole$ = this.userRole.asObservable();
 
   constructor(private router: Router) {
     // Comprueba si ya existe un token al cargar la app
     this.checkToken();
   }
 
-  private checkToken() {
+ private checkToken() {
     const token = localStorage.getItem('auth_token');
-    if (token) {
+    const role = localStorage.getItem('user_role') as 'admin' | 'user' | null;
+    if (token && role) {
       this.isAuthenticated.next(true);
+      this.userRole.next(role);
     }
   }
 
   // --- MÉTODO ACTUALIZADO ---
   // Ahora acepta credenciales (aunque no las usaremos para la simulación)
-  login(credentials: { email: string, password: string }): Observable<boolean> {
-    console.log('Simulando login para:', credentials.email);
+login(credentials: { email: string, password: string }): Observable<boolean> {
+    const isAdmin = credentials.email === 'admin@gmail.com' && credentials.password === '123456';
+    const role = isAdmin ? 'admin' : 'user';
 
-    // 1. Crea un token JWT falso. En una app real, esto vendría del backend.
-    // Un JWT simple tiene 3 partes separadas por puntos.
-    const fakeHeader = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
-    const fakePayload = btoa(JSON.stringify({ userId: '123', email: credentials.email, exp: Math.floor(Date.now() / 1000) + 3600 }));
-    const fakeSignature = 'fake-signature-for-testing'; // Esto no es seguro, solo para simulación
-    const fakeToken = `${fakeHeader}.${fakePayload}.${fakeSignature}`;
+    // Simula la creación del token y el perfil
+    const fakeToken = btoa(JSON.stringify({ email: credentials.email, role: role }));
+    const fakeUserProfile = this.getFakeProfile(credentials.email, role);
 
-    // 2. Guarda el token en el localStorage del navegador
     localStorage.setItem('auth_token', fakeToken);
-
-    const fakeUserProfile = {
-      firstName: 'Samantha',
-      lastName: 'Jiménez',
-      email: credentials.email,
-      birthDate: '1998-05-15T00:00:00Z',
-      profilePictureUrl: '/assets/images/avatar.png' // Una imagen de avatar de ejemplo
-    };
     localStorage.setItem('user_profile', JSON.stringify(fakeUserProfile));
+    localStorage.setItem('user_role', role); // Guardamos el rol
 
-    // 3. Notifica a toda la app que el usuario está autenticado
     this.isAuthenticated.next(true);
+    this.userRole.next(role); // Notificamos el nuevo rol
 
-    // 4. Devuelve un Observable que emite 'true' para simular una respuesta exitosa de la API
-    return of(true).pipe(
-      tap(() => this.router.navigate(['/profile'])) // Redirige al perfil después del login exitoso
-    );
+    // Redirige según el rol
+    const redirectPath = isAdmin ? '/admin' : '/profile';
+    return of(true).pipe(tap(() => this.router.navigate([redirectPath])));
   }
 
-   getUserProfile(): User | null {
+   getUserProfile(): Models.User.User | null {
     const profile = localStorage.getItem('user_profile');
     return profile ? JSON.parse(profile) : null;
   }
@@ -63,9 +57,38 @@ export class AuthService {
   logout() {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('user_profile');
+    localStorage.removeItem('user_role'); // Limpia el rol
     this.isAuthenticated.next(false);
+    this.userRole.next(null); // Resetea el rol
     this.router.navigate(['/home'], { replaceUrl: true });
   }
+
+   private getFakeProfile(email: string, role: 'admin' | 'user'): Models.User.User {
+  if (role === 'admin') {
+    return {
+      id: 'admin01',
+      email,
+      firstName: 'Admin',
+      lastName: 'Principal',
+      date_of_birth: '1990-01-01',
+      career: 'Administración',
+      role: 'admin',
+      status: 'active', // <-- Añade esta línea
+      created_at: new Date().toISOString(), // <-- Añade esta línea
+    };
+  }
+  return {
+    id: 'user123',
+    email,
+    firstName: 'Samantha',
+    lastName: 'Jiménez',
+    date_of_birth: '1998-05-15',
+    career: 'Ingeniería de Sistemas',
+    role: 'user',
+    status: 'active', // <-- Añade esta línea
+    created_at: new Date().toISOString(), // <-- Añade esta línea
+  };
+}
 
  
   

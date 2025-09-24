@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router'; // Para leer el ID de la URL
 import { BlogService } from 'src/app/shared/services/blog';
-import { Blog } from 'src/app/shared/models/blog.model';
+import { Models } from 'src/app/shared/models/models';
 
 @Component({
   selector: 'app-blog-item',
@@ -15,7 +15,7 @@ import { Blog } from 'src/app/shared/models/blog.model';
 export class BlogItemComponent  implements OnInit {
 
 
-  blog: Blog | null = null;
+  blog: Models.Blog.Blog | null = null;
   isLoading = true;
 
   constructor(

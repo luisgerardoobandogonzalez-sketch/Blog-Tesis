@@ -1,0 +1,72 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Analíticas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  
+  <div *ngIf="isLoading">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <div *ngIf="!isLoading && summaryData">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6" size-md="3">
+          <ion-card class="ion-text-center">
+            <ion-card-header>
+              <ion-card-subtitle>Usuarios Totales</ion-card-subtitle>
+              <ion-card-title>{{ summaryData.totalUsers }}</ion-card-title>
+            </ion-card-header>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6" size-md="3">
+          <ion-card class="ion-text-center">
+            <ion-card-header>
+              <ion-card-subtitle>Blogs Totales</ion-card-subtitle>
+              <ion-card-title>{{ summaryData.totalBlogs }}</ion-card-title>
+            </ion-card-header>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6" size-md="3">
+          <ion-card class="ion-text-center" color="success">
+            <ion-card-header>
+              <ion-card-subtitle>Nuevos Hoy</ion-card-subtitle>
+              <ion-card-title>+{{ summaryData.newUsersToday }}</ion-card-title>
+            </ion-card-header>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6" size-md="3">
+          <ion-card class="ion-text-center" color="tertiary">
+            <ion-card-header>
+              <ion-card-subtitle>Visitas Totales</ion-card-subtitle>
+              <ion-card-title>{{ summaryData.totalViews }}</ion-card-title>
+            </ion-card-header>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Actividad de Usuarios (Gráfico)</ion-card-title>
+      </ion-card-header>
+      <ion-card-content class="ion-text-center">
+        <p>Aquí se integraría una librería de gráficos como Chart.js.</p>
+        <ion-icon name="bar-chart-outline" size="large"></ion-icon>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-list-header>Actividad Reciente</ion-list-header>
+    <ion-list>
+      <ion-item *ngFor="let activity of summaryData.recentActivity">
+        <ion-label>
+          <h3>{{ activity.type }}</h3>
+          <p>{{ activity.user }} - {{ activity.time }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
+
+</ion-content>

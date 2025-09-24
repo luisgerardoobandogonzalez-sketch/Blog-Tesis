@@ -1,6 +1,6 @@
 import { Component, OnDestroy,OnInit } from '@angular/core';
 import { BlogService } from 'src/app/shared/services/blog';
-import { Blog } from 'src/app/shared/models/blog.model';
+import { Models } from 'src/app/shared/models/models';
 import { Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
@@ -18,7 +18,7 @@ import { Subscription } from 'rxjs'; // Importa Subscription
 })
 export class HomePage implements OnInit {
 
-   public blogs: Blog[] = [];
+   public blogs: Models.Blog.Blog[] = [];
   public isLoading = true;
   private blogAddedSubscription!: Subscription; // 
 

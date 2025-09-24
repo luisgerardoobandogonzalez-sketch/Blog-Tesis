@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from './core/guards/auth-guard';
+import { AdminGuard } from './core/guards/admin-guard';
 
 export const routes: Routes = [
   {
@@ -21,8 +22,28 @@ export const routes: Routes = [
     loadComponent: () => import('./shared/components/blog-item/blog-item.component').then( m => m.BlogItemComponent)
   },
   {
+    path: 'admin',
+    canActivate: [AuthGuard, AdminGuard], // Protegido por login Y por rol de admin
+    loadComponent: () => import('./admin/dashboard/dashboard.component').then(c => c.DashboardComponent),
+    children: [
+      { path: '', redirectTo: 'analytics', pathMatch: 'full' },
+      { path: 'analytics', loadComponent: () => import('./admin/analytics/analytics.page').then(p => p.AnalyticsPage) },
+      { path: 'users', loadComponent: () => import('./admin/users/users.page').then(p => p.UsersPage) },
+    
+    ]
+  },
+   {
+    path: 'user/:id', // Perfil de un usuario específico por ID
+    loadComponent: () => import('./pages/user-profile/user-profile.page').then( m => m.UserProfilePage)
+  },
+  {
     path: '',
     redirectTo: 'home',
     pathMatch: 'full',
   },
+  {
+    path: 'user-profile',
+    loadComponent: () => import('./pages/user-profile/user-profile.page').then( m => m.UserProfilePage)
+  },
+
 ];

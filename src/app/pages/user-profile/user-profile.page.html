@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin/users"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Perfil de Usuario</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div *ngIf="isLoading" class="ion-text-center">
+    <ion-spinner></ion-spinner>
+  </div>
+
+  <div *ngIf="!isLoading && userProfile">
+    <ion-avatar class="profile-avatar">
+      <img [src]="userProfile.profile_picture_url || 'assets/images/avatar.png'" />
+    </ion-avatar>
+    <h1 class="profile-name">{{ userProfile.firstName }} {{ userProfile.lastName }}</h1>
+    <p class="profile-email">{{ userProfile.email }} - Miembro desde {{ userProfile.created_at | date }}</p>
+
+    <ion-list-header>Publicaciones</ion-list-header>
+    <div *ngIf="userBlogs.length > 0; else noBlogs">
+      <ion-card *ngFor="let blog of userBlogs" [routerLink]="['/blog', blog._id]" button>
+        <ion-card-header>
+          <ion-card-title>{{ blog.title }}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>{{ blog.excerpt }}</ion-card-content>
+      </ion-card>
+    </div>
+    <ng-template #noBlogs><p class="ion-padding-start">Este usuario aún no ha publicado nada.</p></ng-template>
+  </div>
+</ion-content>

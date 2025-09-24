@@ -2,12 +2,15 @@ import { Component } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { HeaderComponent } from './shared/components/header/header.component';
 import { MenuComponent } from './shared/components/menu/menu.component';
+import { AuthService } from './core/services/auth';
 
 // 1. Importa la función addIcons
 import { addIcons } from 'ionicons';
 
 // 2. Importa los íconos que vas a usar (usa el nombre en camelCase)
-import { homeOutline, personOutline, createOutline, settingsOutline, menuOutline, logOutOutline, personCircleOutline, searchOutline, logInOutline, logoFacebook, logoGoogle } from 'ionicons/icons';
+import { homeOutline, personOutline, createOutline, settingsOutline, menuOutline, logOutOutline, personCircleOutline, searchOutline, logInOutline, logoFacebook, logoGoogle, analyticsOutline, peopleOutline, eyeOutline, pencilOutline, banOutline, barChartOutline, checkmarkCircle, atCircleOutline, checkmarkCircleOutline } from 'ionicons/icons';
+import { CommonModule } from '@angular/common';
+import { Router, RouterModule } from '@angular/router';
 
 
 @Component({
@@ -18,28 +21,38 @@ import { homeOutline, personOutline, createOutline, settingsOutline, menuOutline
   imports: [
     IonicModule,
     MenuComponent,
-    HeaderComponent,  
+    HeaderComponent,
+    CommonModule,
+    RouterModule,  
   ],
 })
 export class AppComponent {
 
-  constructor() {
+  constructor(public authService: AuthService) {
     // 3. Llama a addIcons en el constructor con los íconos importados
     // La llave es el nombre que usas en el HTML (kebab-case)
     // El valor es la variable que importaste (camelCase)
     addIcons({
-      'home-outline': homeOutline,
-      'person-outline': personOutline,
-      'create-outline': createOutline,
-      'settings-outline': settingsOutline,
-      'menu-outline': menuOutline,
-      'log-in-outline': logInOutline,           // <-- Añadido
-      'search-outline': searchOutline,         // <-- Añadido
-      'person-circle-outline': personCircleOutline, // <-- Añadido
-      'log-out-outline': logOutOutline,
-      'logo-facebook': logoFacebook,
-      'logo-google': logoGoogle,
-      // ...agrega aquí cualquier otro ícono que necesites en tu app
+       homeOutline,
+  personOutline,
+  createOutline,
+  settingsOutline,
+  menuOutline,
+  logInOutline,
+  searchOutline,
+  personCircleOutline,
+  logOutOutline,
+  logoGoogle,
+  logoFacebook,
+  analyticsOutline,  // <-- Ícono para Analíticas (nuevo)
+  peopleOutline,     // <-- Ícono para Usuarios (nuevo)
+  eyeOutline,        // <-- Íconos para Acciones de Admin (nuevos)
+  pencilOutline,
+  banOutline,
+  barChartOutline,
+  checkmarkCircleOutline,
+     // <-- Ícono para el gráfico de Analytics (nuevo)
+
     });
   }
 }
