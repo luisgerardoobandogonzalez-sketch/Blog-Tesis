@@ -1,68 +1,69 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, of, tap } from 'rxjs'; // Importa 'of' y 'tap'
+import { BehaviorSubject, Observable, of, tap } from 'rxjs';
 import { Models } from 'src/app/shared/models/models';
 
-@Injectable({
-  providedIn: 'root'
-})
+// --- 1. DEFINE LA CLAVE COMO UNA CONSTANTE AQUÍ ---
+const USER_PROFILE_KEY = 'user_profile';
+const AUTH_TOKEN_KEY = 'auth_token';
+const USER_ROLE_KEY = 'user_role';
+// ----------------------------------------------------
+
+@Injectable({ providedIn: 'root' })
 export class AuthService {
   private isAuthenticated = new BehaviorSubject<boolean>(false);
   public isAuthenticated$ = this.isAuthenticated.asObservable();
-    // --- NUEVO: Subject para manejar el rol del usuario ---
+  
   private userRole = new BehaviorSubject<'admin' | 'user' | null>(null);
   public userRole$ = this.userRole.asObservable();
 
   constructor(private router: Router) {
-    // Comprueba si ya existe un token al cargar la app
     this.checkToken();
   }
 
- private checkToken() {
-    const token = localStorage.getItem('auth_token');
-    const role = localStorage.getItem('user_role') as 'admin' | 'user' | null;
+  private checkToken() {
+    const token = localStorage.getItem(AUTH_TOKEN_KEY); // Usa la constante
+    const role = localStorage.getItem(USER_ROLE_KEY) as 'admin' | 'user' | null; // Usa la constante
     if (token && role) {
       this.isAuthenticated.next(true);
       this.userRole.next(role);
     }
   }
 
-  // --- MÉTODO ACTUALIZADO ---
-  // Ahora acepta credenciales (aunque no las usaremos para la simulación)
-login(credentials: { email: string, password: string }): Observable<boolean> {
+  login(credentials: { email: string, password: string }): Observable<boolean> {
     const isAdmin = credentials.email === 'admin@gmail.com' && credentials.password === '123456';
     const role = isAdmin ? 'admin' : 'user';
-
-    // Simula la creación del token y el perfil
     const fakeToken = btoa(JSON.stringify({ email: credentials.email, role: role }));
     const fakeUserProfile = this.getFakeProfile(credentials.email, role);
 
-    localStorage.setItem('auth_token', fakeToken);
-    localStorage.setItem('user_profile', JSON.stringify(fakeUserProfile));
-    localStorage.setItem('user_role', role); // Guardamos el rol
+    // 2. USA LAS CONSTANTES PARA GUARDAR LOS DATOS
+    localStorage.setItem(AUTH_TOKEN_KEY, fakeToken);
+    localStorage.setItem(USER_PROFILE_KEY, JSON.stringify(fakeUserProfile));
+    localStorage.setItem(USER_ROLE_KEY, role);
 
     this.isAuthenticated.next(true);
-    this.userRole.next(role); // Notificamos el nuevo rol
+    this.userRole.next(role);
 
-    // Redirige según el rol
     const redirectPath = isAdmin ? '/admin' : '/profile';
     return of(true).pipe(tap(() => this.router.navigate([redirectPath])));
   }
-
-   getUserProfile(): Models.User.User | null {
-    const profile = localStorage.getItem('user_profile');
+  
+  // 3. USA LA CONSTANTE PARA OBTENER LOS DATOS
+  getUserProfile(): Models.User.User | null {
+    const profile = localStorage.getItem(USER_PROFILE_KEY);
     return profile ? JSON.parse(profile) : null;
   }
 
   logout() {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_profile');
-    localStorage.removeItem('user_role'); // Limpia el rol
+    // 4. USA LAS CONSTANTES PARA LIMPIAR TODO
+    localStorage.removeItem(AUTH_TOKEN_KEY);
+    localStorage.removeItem(USER_PROFILE_KEY);
+    localStorage.removeItem(USER_ROLE_KEY);
+    
     this.isAuthenticated.next(false);
-    this.userRole.next(null); // Resetea el rol
+    this.userRole.next(null);
     this.router.navigate(['/home'], { replaceUrl: true });
   }
-
    private getFakeProfile(email: string, role: 'admin' | 'user'): Models.User.User {
   if (role === 'admin') {
     return {
