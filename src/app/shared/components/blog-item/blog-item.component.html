@@ -16,13 +16,33 @@
   </div>
 
   <div *ngIf="!isLoading && blog">
+    <ion-fab vertical="top" horizontal="end" slot="fixed">
+      <ion-fab-button *ngIf="currentUser && currentUser.id === blog.author_id" (click)="openEditModal()">
+        <ion-icon name="pencil-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
     <h1>{{ blog.title }}</h1>
-    <p class="subtitle">Por: {{ blog.author_id }} | Publicado el: {{ blog.created_at | date:'longDate' }}</p>
+    <p class="subtitle">Por: {{ blog.author_id }} | Publicado el: {{ blog.created_at | date:'longDate':'es-GT' }}</p>
+
+    <div class="actions-toolbar">
+      <ion-button (click)="toggleLike()" fill="clear" [color]="blog.currentUserHasLiked ? 'danger' : 'medium'">
+        <ion-icon slot="start" [name]="blog.currentUserHasLiked ? 'heart' : 'heart-outline'"></ion-icon>
+        {{ blog.likes_count }}
+      </ion-button>
+      <ion-button fill="clear" color="medium">
+        <ion-icon slot="start" name="chatbubble-outline"></ion-icon>
+        {{ blog.comments_count }}
+      </ion-button>
+    </div>
 
     <div *ngIf="blog.images && blog.images.length > 0">
       <ion-img *ngFor="let imageUrl of blog.images" [src]="imageUrl" alt="Imagen del blog"></ion-img>
     </div>
 
     <div class="blog-content" [innerHTML]="blog.content"></div>
+
+    <ion-item-divider></ion-item-divider>
+   <app-comment-section [blogId]="blog._id" [blogAuthorId]="blog.author_id"></app-comment-section>
+    
   </div>
 </ion-content>

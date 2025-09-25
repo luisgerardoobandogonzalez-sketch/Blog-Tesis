@@ -109,4 +109,35 @@ createBlog(blogData: Partial<Models.Blog.Blog>, authorId: string): Observable<Mo
   console.log('Nuevo blog creado con estructura completa:', newBlog);
   return of(newBlog).pipe(delay(100));
 }
+
+
+likeBlog(blogId: string): Observable<Models.Blog.Blog> {
+  const blog = this.fakeBlogs.find(b => b._id === blogId);
+  if (blog && !blog.currentUserHasLiked) {
+    blog.likes_count++;
+    blog.currentUserHasLiked = true;
+  }
+  return of(blog!);
+}
+
+unlikeBlog(blogId: string): Observable<Models.Blog.Blog> {
+  const blog = this.fakeBlogs.find(b => b._id === blogId);
+  if (blog && blog.currentUserHasLiked) {
+    blog.likes_count--;
+    blog.currentUserHasLiked = false;
+  }
+  return of(blog!);
+}
+
+
+updateBlog(blogId: string, updatedData: Partial<Models.Blog.Blog>): Observable<Models.Blog.Blog> {
+  const blogIndex = this.fakeBlogs.findIndex(b => b._id === blogId);
+  if (blogIndex > -1) {
+    // Actualiza el blog en el array con los nuevos datos
+    this.fakeBlogs[blogIndex] = { ...this.fakeBlogs[blogIndex], ...updatedData };
+    console.log('Blog actualizado:', this.fakeBlogs[blogIndex]);
+    return of(this.fakeBlogs[blogIndex]);
+  }
+  return throwError(() => new Error('No se pudo actualizar el blog'));
+}
 }

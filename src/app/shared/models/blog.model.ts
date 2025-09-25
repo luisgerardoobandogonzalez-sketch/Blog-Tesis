@@ -18,6 +18,7 @@ export interface Blog {
   views_count: number;
   is_published: boolean;
   is_featured: boolean;
+  currentUserHasLiked?: boolean;
   meta_data?: {
     seo_title?: string;
     seo_description?: string;

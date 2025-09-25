@@ -38,6 +38,11 @@
         </ion-card-header>
         <ion-card-content>
           {{ blog.content | slice:0:150 }}...
+
+          <ion-button (click)="toggleLikeOnList(blog, $event)" fill="clear" size="small" [color]="blog.currentUserHasLiked ? 'danger' : 'medium'" class="ion-float-right">
+      <ion-icon slot="start" [name]="blog.currentUserHasLiked ? 'heart' : 'heart-outline'"></ion-icon>
+      {{ blog.likes_count }}
+    </ion-button>
         </ion-card-content>
       </ion-card>
     </ion-list>

@@ -1,0 +1,35 @@
+<div class="comments-container">
+  <ion-list-header>Comentarios</ion-list-header>
+
+  <ion-item>
+    <ion-textarea
+      label="Añadir un comentario..."
+      [(ngModel)]="newCommentText"
+      [autoGrow]="true"
+      [readonly]="!(isAuthenticated$ | async)"
+      placeholder="{{ (isAuthenticated$ | async) ? 'Escribe algo...' : 'Inicia sesión para comentar' }}">
+    </ion-textarea>
+    
+    <ion-button (click)="handleCommentPost()" slot="end" [disabled]="!newCommentText.trim()">
+      <ion-icon name="send-outline" slot="icon-only"></ion-icon>
+    </ion-button>
+  </ion-item>
+
+  <ion-list>
+  <ion-item *ngFor="let comment of comments" lines="none">
+    <ion-avatar slot="start">
+      <img src="assets/images/avatar.png" />
+    </ion-avatar>
+    <ion-label>
+      <h3>{{ comment.author_id }}</h3>
+      <p>{{ comment.content }}</p>
+    </ion-label>
+
+    <ion-buttons slot="end" *ngIf="canDelete(comment)">
+      <ion-button (click)="presentDeleteConfirm(comment._id)" fill="clear" color="danger">
+        <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    </ion-item>
+</ion-list>
+</div>

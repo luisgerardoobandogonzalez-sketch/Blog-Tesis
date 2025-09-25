@@ -8,7 +8,7 @@ import { AuthService } from './core/services/auth';
 import { addIcons } from 'ionicons';
 
 // 2. Importa los íconos que vas a usar (usa el nombre en camelCase)
-import { homeOutline, personOutline, createOutline, settingsOutline, menuOutline, logOutOutline, personCircleOutline, searchOutline, logInOutline, logoFacebook, logoGoogle, analyticsOutline, peopleOutline, eyeOutline, pencilOutline, banOutline, barChartOutline, checkmarkCircle, atCircleOutline, checkmarkCircleOutline } from 'ionicons/icons';
+import { homeOutline, personOutline, createOutline, settingsOutline, menuOutline, logOutOutline, personCircleOutline, searchOutline, logInOutline, logoFacebook, logoGoogle, analyticsOutline, peopleOutline, eyeOutline, pencilOutline, banOutline, barChartOutline, checkmarkCircle, atCircleOutline, checkmarkCircleOutline, heartOutline, chatbubbleOutline, heart, sendOutline, trashOutline } from 'ionicons/icons';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 
@@ -51,6 +51,11 @@ export class AppComponent {
   banOutline,
   barChartOutline,
   checkmarkCircleOutline,
+  heartOutline,
+  chatbubbleOutline,
+  heart,
+  sendOutline,
+  trashOutline,
      // <-- Ícono para el gráfico de Analytics (nuevo)
 
     });

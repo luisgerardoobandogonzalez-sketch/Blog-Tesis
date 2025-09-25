@@ -2,12 +2,14 @@ import { Component, OnDestroy,OnInit } from '@angular/core';
 import { BlogService } from 'src/app/shared/services/blog';
 import { Models } from 'src/app/shared/models/models';
 import { Router } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ModalController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../core/services/auth';
-import { ModalController } from '@ionic/angular';
 import { CreateBlogModalComponent } from 'src/app/shared/components/create-blog-modal/create-blog-modal.component';
 import { Subscription } from 'rxjs'; // Importa Subscription
+import { AuthModalComponent } from 'src/app/shared/components/auth-modal/auth-modal.component';
+import { take } from 'rxjs/operators';
+
 
 
 @Component({
@@ -16,7 +18,7 @@ import { Subscription } from 'rxjs'; // Importa Subscription
   styleUrls: ['home.page.scss'],
   imports: [IonicModule, CommonModule],
 })
-export class HomePage implements OnInit {
+export class HomePage implements OnInit, OnDestroy {
 
    public blogs: Models.Blog.Blog[] = [];
   public isLoading = true;
@@ -73,4 +75,32 @@ export class HomePage implements OnInit {
       }
     }
   }
+
+
+ toggleLikeOnList(blog: Models.Blog.Blog, event: Event) {
+    event.stopPropagation(); // Previene la navegación
+    
+    this.authService.isAuthenticated$.pipe(take(1)).subscribe(isAuth => {
+      if (isAuth) {
+        // Lógica de siempre
+        if (blog.currentUserHasLiked) {
+          this.blogService.unlikeBlog(blog._id).subscribe();
+        } else {
+          this.blogService.likeBlog(blog._id).subscribe();
+        }
+      } else {
+        // Abrir modal
+        this.openAuthModal();
+      }
+    });
+  }
+
+  // --- NUEVA FUNCIÓN DE AYUDA ---
+  async openAuthModal() {
+    const modal = await this.modalCtrl.create({
+      component: AuthModalComponent,
+    });
+    await modal.present();
+  }
+
 }
