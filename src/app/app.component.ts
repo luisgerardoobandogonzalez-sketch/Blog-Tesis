@@ -11,6 +11,8 @@ import { addIcons } from 'ionicons';
 import { homeOutline, personOutline, createOutline, settingsOutline, menuOutline, logOutOutline, personCircleOutline, searchOutline, logInOutline, logoFacebook, logoGoogle, analyticsOutline, peopleOutline, eyeOutline, pencilOutline, banOutline, barChartOutline, checkmarkCircle, atCircleOutline, checkmarkCircleOutline, heartOutline, chatbubbleOutline, heart, sendOutline, trashOutline } from 'ionicons/icons';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
+import { AdminMenuComponent } from './admin/admin-menu/admin-menu.component';
+import { AdminHeaderComponent } from './admin/admin-header/admin-header.component';
 
 
 @Component({
@@ -23,7 +25,9 @@ import { Router, RouterModule } from '@angular/router';
     MenuComponent,
     HeaderComponent,
     CommonModule,
-    RouterModule,  
+    RouterModule,
+    AdminMenuComponent,  
+    AdminHeaderComponent,
   ],
 })
 export class AppComponent {

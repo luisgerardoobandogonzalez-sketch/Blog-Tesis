@@ -74,7 +74,7 @@ createBlog(blogData: Partial<Models.Blog.Blog>, authorId: string): Observable<Mo
     title: blogData.title!,
     content: blogData.content!,
     excerpt: excerpt, 
-    featured_image: '/assets/images/placeholder.png', 
+    featured_image: '/assets/icon/favicon.png', 
     images: [], 
     tags: blogData.tags || [],
     career: blogData.career!,

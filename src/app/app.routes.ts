@@ -21,15 +21,13 @@ export const routes: Routes = [
     path: 'blog/:id', // ':id' es un parámetro que contendrá el ID del blog
     loadComponent: () => import('./shared/components/blog-item/blog-item.component').then( m => m.BlogItemComponent)
   },
-  {
+ {
     path: 'admin',
-    canActivate: [AuthGuard, AdminGuard], // Protegido por login Y por rol de admin
-    loadComponent: () => import('./admin/dashboard/dashboard.component').then(c => c.DashboardComponent),
-    children: [
+    canActivate: [AuthGuard, AdminGuard],
+    children: [ // Los hijos ahora cuelgan directamente de /admin
       { path: '', redirectTo: 'analytics', pathMatch: 'full' },
       { path: 'analytics', loadComponent: () => import('./admin/analytics/analytics.page').then(p => p.AnalyticsPage) },
       { path: 'users', loadComponent: () => import('./admin/users/users.page').then(p => p.UsersPage) },
-    
     ]
   },
    {

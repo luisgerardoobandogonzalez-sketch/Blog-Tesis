@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, of, tap } from 'rxjs';
 import { Models } from 'src/app/shared/models/models';
+import { map } from 'rxjs/operators';
 
 // --- 1. DEFINE LA CLAVE COMO UNA CONSTANTE AQUÍ ---
 const USER_PROFILE_KEY = 'user_profile';
@@ -17,7 +18,13 @@ export class AuthService {
   private userRole = new BehaviorSubject<'admin' | 'user' | null>(null);
   public userRole$ = this.userRole.asObservable();
 
+   public isAdmin$: Observable<boolean>;
+  public isUserOrGuest$: Observable<boolean>;
+
   constructor(private router: Router) {
+ this.isAdmin$ = this.userRole$.pipe(map(role => role === 'admin'));
+    this.isUserOrGuest$ = this.userRole$.pipe(map(role => role !== 'admin'));
+
     this.checkToken();
   }
 

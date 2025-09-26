@@ -1,0 +1,23 @@
+<ion-menu contentId="main-content">
+  <ion-header>
+    <ion-toolbar color="dark">
+      <ion-title>Panel Admin</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <ion-list>
+      <ion-item routerLink="/admin/analytics" routerDirection="root" (click)="closeMenu()">
+        <ion-icon name="analytics-outline" slot="start"></ion-icon>
+        <ion-label>Analíticas</ion-label>
+      </ion-item>
+      <ion-item routerLink="/admin/users" routerDirection="root" (click)="closeMenu()">
+        <ion-icon name="people-outline" slot="start"></ion-icon>
+        <ion-label>Gestionar Usuarios</ion-label>
+      </ion-item>
+      <ion-item (click)="logout()" button color="danger">
+        <ion-icon name="log-out-outline" slot="start"></ion-icon>
+        <ion-label>Cerrar Sesión</ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-menu>

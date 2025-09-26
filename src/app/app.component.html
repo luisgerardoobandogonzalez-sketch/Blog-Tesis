@@ -1,17 +1,15 @@
-<div [ngSwitch]="authService.userRole$ | async">
+<ion-app>
+  <app-menu *ngIf="authService.isUserOrGuest$ | async"></app-menu>
   
-  <router-outlet *ngSwitchCase="'admin'"></router-outlet>
-  
-  <ng-container *ngSwitchDefault>
-    <ion-app>
-      <app-menu></app-menu>
-      <div class="ion-page" id="main-content">
-        <app-header></app-header>
-        <ion-content class="ion-padding">
-          <router-outlet></router-outlet>
-        </ion-content>
-      </div>
-    </ion-app>
-  </ng-container>
+  <app-admin-menu *ngIf="authService.isAdmin$ | async"></app-admin-menu>
 
-</div>
+  <div class="ion-page" id="main-content">
+    
+    <app-header *ngIf="authService.isUserOrGuest$ | async"></app-header>
+    
+    <app-admin-header *ngIf="authService.isAdmin$ | async"></app-admin-header>
+    <ion-content>
+      <router-outlet></router-outlet>
+    </ion-content>
+  </div>
+</ion-app>

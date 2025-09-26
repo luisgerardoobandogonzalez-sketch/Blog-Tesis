@@ -5,6 +5,8 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AdminService } from 'src/app/admin/services/admin';
 import { BlogService } from 'src/app/shared/services/blog';
 import { Models } from 'src/app/shared/models/models';
+import { UserService } from 'src/app/shared/services/user'; 
+import { AuthService } from 'src/app/core/services/auth';
 
 @Component({
   selector: 'app-user-profile',
@@ -17,11 +19,17 @@ export class UserProfilePage implements OnInit {
   userProfile: Models.User.User | null | undefined = null;
   userBlogs: Models.Blog.Blog[] = [];
   isLoading = true;
+  followerCount = 0;
+  followingCount = 0;
+  isFollowing = false;
+  isCurrentUserProfile = false;
 
   constructor(
     private route: ActivatedRoute,
     private adminService: AdminService,
-    private blogService: BlogService
+    private blogService: BlogService,
+    private userService: UserService, // Inyéctalo
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -39,4 +47,47 @@ export class UserProfilePage implements OnInit {
       });
     }
   }
+
+ loadProfileData(userId: string) {
+    this.isLoading = true;
+    // Carga de datos del perfil
+    this.adminService.getUserById(userId).subscribe(user => {
+      this.userProfile = user;
+      // Carga de blogs
+      this.blogService.getBlogsByAuthorId(userId).subscribe(blogs => {
+        this.userBlogs = blogs;
+      });
+      // Carga de contadores y estado de seguimiento
+      this.userService.getFollowerCount(userId).subscribe(count => this.followerCount = count);
+      this.userService.getFollowingCount(userId).subscribe(count => this.followingCount = count);
+      this.userService.isFollowing(userId).subscribe(status => this.isFollowing = status);
+      
+      this.isLoading = false;
+
+      console.log('seguidores:', this.followerCount);
+    });
+  }
+
+  // --- NUEVA FUNCIÓN PARA EL BOTÓN ---
+  toggleFollow() {
+    if (!this.userProfile) return;
+
+    const action$ = this.isFollowing 
+      ? this.userService.unfollowUser(this.userProfile.id)
+      : this.userService.followUser(this.userProfile.id);
+
+    action$.subscribe(() => {
+      // Actualiza el estado y contadores localmente para una respuesta instantánea en la UI
+      this.isFollowing = !this.isFollowing;
+      if (this.isFollowing) {
+        this.followerCount++;
+      } else {
+        this.followerCount--;
+      }
+    });
+  }
+
+
+
+
 }

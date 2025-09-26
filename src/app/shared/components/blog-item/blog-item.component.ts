@@ -42,13 +42,6 @@ export class BlogItemComponent  implements OnInit {
       this.blogService.getBlogById(blogId).subscribe(data => {
         this.blog = data; // 3. Guardamos los datos del blog
         this.isLoading = false;
-
-    console.log('--- BlogItemComponent ---');
-    console.log('ID del Usuario Actual:', this.currentUser?.id);
-    console.log('ID del Autor del Blog:', this.blog?.author_id);
-    console.log('¿Los IDs son iguales?:', this.currentUser?.id === this.blog?.author_id);
-    console.log('-------------------------');
-
       });
     }
   }
