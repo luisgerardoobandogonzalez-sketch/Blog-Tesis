@@ -1,0 +1,46 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Gestionar Blogs</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-searchbar placeholder="Buscar por título o autor"></ion-searchbar>
+
+  <div *ngIf="isLoading" class="ion-text-center">
+    <ion-spinner></ion-spinner>
+  </div>
+
+  <ion-list *ngIf="!isLoading">
+    <ion-item *ngFor="let blog of allBlogs" lines="full">
+      <ion-label>
+        <h2>{{ blog.title }}</h2>
+        <p>Autor: {{ blog.author_id }} | Creado: {{ blog.created_at | date:'short' }}</p>
+        <div>
+          <ion-chip [color]="blog.moderation.status === 'approved' ? 'success' : (blog.moderation.status === 'pending' ? 'warning' : 'danger')" outline="true">
+            <ion-label>{{ blog.moderation.status | titlecase }}</ion-label>
+          </ion-chip>
+          <ion-chip [color]="blog.is_published ? 'primary' : 'medium'" outline="true">
+            <ion-label>{{ blog.is_published ? 'Publicado' : 'Borrador' }}</ion-label>
+          </ion-chip>
+          <ion-chip *ngIf="blog.is_featured" color="tertiary" outline="true">
+            <ion-icon name="star"></ion-icon>
+            <ion-label>Destacado</ion-label>
+          </ion-chip>
+        </div>
+      </ion-label>
+      
+         <ion-buttons slot="end">
+      <ng-container *ngIf="blog.moderation.status === 'pending'">
+        <ion-button (click)="approveBlog(blog); $event.stopPropagation()" fill="clear" color="success"><ion-icon name="checkmark-done-outline" slot="icon-only"></ion-icon></ion-button>
+        <ion-button (click)="rejectBlog(blog); $event.stopPropagation()" fill="clear" color="danger"><ion-icon name="close-circle-outline" slot="icon-only"></ion-icon></ion-button>
+      </ng-container>
+      
+      <ion-button (click)="toggleFeatured(blog); $event.stopPropagation()" fill="clear" [color]="blog.is_featured ? 'tertiary' : 'medium'"><ion-icon name="star-outline" slot="icon-only"></ion-icon></ion-button>
+      <ion-button (click)="editBlog(blog, $event)" fill="clear"><ion-icon name="pencil-outline" slot="icon-only"></ion-icon></ion-button>
+      <ion-button (click)="deleteBlog(blog); $event.stopPropagation()" fill="clear" color="danger"><ion-icon name="trash-outline" slot="icon-only"></ion-icon></ion-button>
+    </ion-buttons>
+
+    </ion-item>
+  </ion-list>
+</ion-content>

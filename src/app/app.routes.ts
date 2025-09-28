@@ -28,11 +28,18 @@ export const routes: Routes = [
       { path: '', redirectTo: 'analytics', pathMatch: 'full' },
       { path: 'analytics', loadComponent: () => import('./admin/analytics/analytics.page').then(p => p.AnalyticsPage) },
       { path: 'users', loadComponent: () => import('./admin/users/users.page').then(p => p.UsersPage) },
+      { path: 'blogs', loadComponent: () => import('./admin/manage-blogs/manage-blogs.page').then(p => p.ManageBlogsPage) },
+      { path: 'reports', loadComponent: () => import('./admin/reports/reports.page').then(p => p.ReportsPage) },
     ]
   },
    {
     path: 'user/:id', // Perfil de un usuario específico por ID
     loadComponent: () => import('./pages/user-profile/user-profile.page').then( m => m.UserProfilePage)
+  },
+   {
+    path: 'notifications',
+    loadComponent: () => import('./pages/notifications/notifications.page').then( m => m.NotificationsPage),
+    canActivate: [AuthGuard] // <-- Protegida, solo para usuarios logueados
   },
   {
     path: '',
@@ -43,5 +50,15 @@ export const routes: Routes = [
     path: 'user-profile',
     loadComponent: () => import('./pages/user-profile/user-profile.page').then( m => m.UserProfilePage)
   },
+  {
+    path: 'notifications',
+    loadComponent: () => import('./pages/notifications/notifications.page').then( m => m.NotificationsPage)
+  },
+  {
+    path: 'reports',
+    loadComponent: () => import('./admin/reports/reports.page').then( m => m.ReportsPage)
+  },
+
+
 
 ];

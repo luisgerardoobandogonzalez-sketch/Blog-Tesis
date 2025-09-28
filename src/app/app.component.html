@@ -9,7 +9,7 @@
     
     <app-admin-header *ngIf="authService.isAdmin$ | async"></app-admin-header>
     <ion-content>
-      <router-outlet></router-outlet>
+      <ion-router-outlet></ion-router-outlet>
     </ion-content>
   </div>
 </ion-app>

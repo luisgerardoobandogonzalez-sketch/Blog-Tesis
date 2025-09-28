@@ -1,0 +1,62 @@
+// Estilo para la barra de herramientas de Material
+mat-toolbar {
+  padding-left: 16px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+// Estilo para la sección del perfil
+.profile-section {
+  text-align: center;
+  padding: 20px 16px;
+  background: rgba(var(--ion-color-primary-rgb), 0.05);
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+
+  &:hover {
+    background: rgba(var(--ion-color-primary-rgb), 0.1);
+  }
+
+  .profile-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--ion-color-primary);
+  }
+
+  h2 {
+    margin-top: 10px;
+    margin-bottom: 4px;
+    font-weight: 500;
+    font-size: 1.1rem;
+  }
+  
+  p {
+    margin: 0;
+    color: var(--ion-color-medium);
+    font-size: 0.9rem;
+  }
+}
+
+// Estilo para el elemento de la lista que está activo (gracias a routerLinkActive)
+.active-list-item {
+  background: rgba(var(--ion-color-primary-rgb), 0.1);
+  color: var(--ion-color-primary);
+
+  mat-icon {
+    color: var(--ion-color-primary);
+  }
+}
+
+// Estilo para la sección de cerrar sesión
+.logout-section {
+  border-top: 1px solid #e0e0e0;
+
+  a[mat-list-item] {
+    color: var(--ion-color-danger);
+
+    mat-icon {
+      color: var(--ion-color-danger);
+    }
+  }
+}

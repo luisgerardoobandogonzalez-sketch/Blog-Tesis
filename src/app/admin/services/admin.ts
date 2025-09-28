@@ -10,6 +10,31 @@ export class AdminService {
 
   constructor() { }
 
+    private fakeReports: Models.Report.Report[] = [
+    {
+      _id: 'report01',
+      reporter_id: 'user123', // Samantha
+      reported_content_id: 'c2', // El comentario de Laura
+      content_type: 'comment',
+      reported_user_id: 'user789', // Laura
+      reason: 'inappropriate',
+      description: 'El comentario es ofensivo y no aporta nada a la conversación.',
+      status: 'pending',
+      created_at: new Date(Date.now() - 1000 * 60 * 60).toISOString() // Hace 1 hora
+    },
+    {
+      _id: 'report02',
+      reporter_id: 'user456', // Carlos
+      reported_content_id: 'blog_pending_123', // El post pendiente de aprobación
+      content_type: 'blog',
+      reported_user_id: 'user789', // Laura
+      reason: 'spam',
+      description: 'Este post parece publicidad encubierta.',
+      status: 'pending',
+      created_at: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString() // Hace 5 horas
+    }
+  ];
+
    // Simula una base de datos de usuarios
   private fakeUsers: Models.User.User[] = [
     { id: 'user123', email: 'samantha.j@email.com', firstName: 'Samantha', lastName: 'Jiménez', date_of_birth: '1998-05-15', career: 'Ingeniería de Sistemas', role: 'user', status: 'active', created_at: '2025-01-15T10:00:00Z', profile_picture_url: '/assets/icon/favicon.png' },
@@ -51,4 +76,18 @@ export class AdminService {
   const user = this.fakeUsers.find(u => u.id === id);
   return of(user).pipe(delay(300));
 }
+
+
+ getReports(): Observable<Models.Report.Report[]> {
+    return of(this.fakeReports).pipe(delay(700));
+  }
+
+  updateReportStatus(reportId: string, status: 'reviewed' | 'resolved'): Observable<Models.Report.Report> {
+    const report = this.fakeReports.find(r => r._id === reportId);
+    if (report) {
+      report.status = status;
+    }
+    return of(report!);
+  }
+
 }

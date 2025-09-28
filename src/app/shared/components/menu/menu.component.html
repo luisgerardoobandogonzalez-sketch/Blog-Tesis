@@ -1,31 +1,32 @@
 <ion-menu contentId="main-content" type="overlay">
-  <ion-header>
-    <ion-toolbar color="primary">
-      <ion-title>Menú</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <mat-nav-list>
+    <h3 matSubheader>Navegación</h3>
+    <a mat-list-item routerLink="/home" routerLinkActive="active-list-item" (click)="closeMenu()">
+      <mat-icon matListItemIcon>home</mat-icon>
+      <span matListItemTitle>Inicio</span>
+    </a>
+    <a mat-list-item routerLink="/profile" routerLinkActive="active-list-item" (click)="closeMenu()" *ngIf="isAuthenticated$ | async">
+      <mat-icon matListItemIcon>person</mat-icon>
+      <span matListItemTitle>Mi Perfil</span>
+    </a>
+    
+    <mat-divider></mat-divider>
+    
+    <h3 matSubheader>Acciones</h3>
+    <a mat-list-item (click)="openCreateBlogModal()">
+      <mat-icon matListItemIcon>edit_square</mat-icon>
+      <span matListItemTitle>Escribir Blog</span>
+    </a>
+    <a mat-list-item routerLink="/settings" routerLinkActive="active-list-item" (click)="closeMenu()" *ngIf="isAuthenticated$ | async">
+      <mat-icon matListItemIcon>settings</mat-icon>
+      <span matListItemTitle>Configuración</span>
+    </a>
+  </mat-nav-list>
 
-  <ion-content>
-    <ion-list>
-      <ion-item button (click)="navigateTo('/home')">
-        <ion-icon name="home-outline" slot="start"></ion-icon>
-        <ion-label>Inicio</ion-label>
-      </ion-item>
-
-      <ion-item button (click)="navigateTo('/profile', true)">
-        <ion-icon name="person-outline" slot="start"></ion-icon>
-        <ion-label>Mi Perfil</ion-label>
-      </ion-item>
-
-      <ion-item button (click)="openCreateBlogModal()">
-        <ion-icon name="create-outline" slot="start" ></ion-icon>
-        <ion-label>Escribir Blog</ion-label>
-      </ion-item>
-
-      <ion-item *ngIf="isAuthenticated$ | async" button (click)="navigateTo('/settings', true)">
-        <ion-icon name="settings-outline" slot="start"></ion-icon>
-        <ion-label>Configuración</ion-label>
-      </ion-item>
-    </ion-list>
-  </ion-content>
+  <div class="logout-section" *ngIf="isAuthenticated$ | async">
+    <a mat-list-item (click)="logout()">
+      <mat-icon matListItemIcon color="warn">logout</mat-icon>
+      <span matListItemTitle>Cerrar Sesión</span>
+    </a>
+  </div>
 </ion-menu>

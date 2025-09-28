@@ -1,0 +1,10 @@
+  .unread {
+    --background: var(--ion-color-light);
+    font-weight: bold;
+  }
+  .unread-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--ion-color-primary);
+    border-radius: 50%;
+  }

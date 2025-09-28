@@ -1,7 +1,7 @@
 // Importa CommonModule para *ngIf y el pipe async
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 // Importa IonicModule para usar todos los componentes de Ionic
 import { IonicModule, MenuController, ModalController } from '@ionic/angular';
 import { Observable } from 'rxjs';
@@ -9,6 +9,12 @@ import { take } from 'rxjs/operators'; // <-- Importa 'take' de RxJS
 import { AuthService } from 'src/app/core/services/auth';
 import { AuthModalComponent } from '../auth-modal/auth-modal.component';
 import { CreateBlogModalComponent } from '../create-blog-modal/create-blog-modal.component'; // <-- 1. Importa el nuevo modal
+import { Models } from 'src/app/shared/models/models';
+
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
   selector: 'app-menu',
@@ -17,12 +23,18 @@ import { CreateBlogModalComponent } from '../create-blog-modal/create-blog-modal
   standalone: true,
   // 2. Importa los módulos necesarios aquí
   imports: [
-    IonicModule,    // Para los componentes <ion-header>, <ion-list>, etc.
-    CommonModule    // Para las directivas *ngIf, *ngFor, y el pipe | async
+    IonicModule,
+    CommonModule,
+    RouterModule,
+    MatToolbarModule,
+    MatListModule,
+    MatIconModule,
+    MatDividerModule    // Para las directivas *ngIf, *ngFor, y el pipe | async
   ],
 })
 export class MenuComponent {
   public isAuthenticated$: Observable<boolean>;
+  public currentUser: Models.User.User | null = null;
 
   constructor(
     private authService: AuthService,
@@ -31,6 +43,17 @@ export class MenuComponent {
     private menuCtrl: MenuController
   ) {
     this.isAuthenticated$ = this.authService.isAuthenticated$;
+  }
+
+    ngOnInit() {
+    // Escucha los cambios de autenticación para actualizar el perfil
+    this.isAuthenticated$.subscribe(isAuth => {
+      if (isAuth) {
+        this.currentUser = this.authService.getUserProfile();
+      } else {
+        this.currentUser = null;
+      }
+    });
   }
 
   // ... (el resto de tu lógica no cambia)
@@ -73,5 +96,14 @@ export class MenuComponent {
         await modal.present();
       }
     });
+  }
+
+   async logout() {
+    await this.menuCtrl.close();
+    this.authService.logout();
+  }
+
+   closeMenu() {
+    this.menuCtrl.close();
   }
 }

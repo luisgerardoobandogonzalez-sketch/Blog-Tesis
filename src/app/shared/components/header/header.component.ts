@@ -7,6 +7,7 @@ import { AuthModalComponent } from '../auth-modal/auth-modal.component';
 import { Router } from '@angular/router';
 import { CreateBlogModalComponent } from '../create-blog-modal/create-blog-modal.component';
 import { BlogService } from '../../services/blog';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-header',
@@ -16,12 +17,14 @@ import { BlogService } from '../../services/blog';
 })
 export class HeaderComponent {
   public isAuthenticated$: Observable<boolean>;
+  public isSearchActive = false;
 
   constructor(
     private authService: AuthService,
     private modalCtrl: ModalController,
     private router: Router,
-    private blogService: BlogService
+    private blogService: BlogService,
+    private alertCtrl: AlertController
   ) {
     this.isAuthenticated$ = this.authService.isAuthenticated$;
   }
@@ -33,7 +36,7 @@ export class HeaderComponent {
     await modal.present();
   }
 
-    async openCreateBlogModal() {
+   async openCreateBlogModal() {
     const modal = await this.modalCtrl.create({
       component: CreateBlogModalComponent,
     });
@@ -44,12 +47,22 @@ export class HeaderComponent {
     if (role === 'confirm') {
       const user = this.authService.getUserProfile();
       if (user && data) {
-        // Llamamos al servicio para crear el blog con los datos del modal y el ID del usuario
         this.blogService.createBlog(data, user.id).subscribe(newBlog => {
-          console.log('Blog guardado exitosamente desde el Header');
+          if (newBlog.moderation.status === 'pending') {
+            this.showModerationAlert();
+          }
         });
       }
     }
+  }
+
+    async showModerationAlert() {
+    const alert = await this.alertCtrl.create({
+      header: 'Publicación en Revisión',
+      message: 'Tu publicación contiene palabras que requieren revisión. Un administrador la revisará y aprobará pronto.',
+      buttons: ['Entendido'],
+    });
+    await alert.present();
   }
 
   // --- Funciones para los nuevos botones ---
@@ -87,5 +100,19 @@ export class HeaderComponent {
    async logout() {
     // Luego llamamos al servicio de autenticación para que haga el trabajo
     this.authService.logout();
+  }
+
+
+    navigateToNotifications() {
+    this.router.navigate(['/notifications']);
+  }
+
+   toggleSearch() {
+    this.isSearchActive = !this.isSearchActive;
+  }
+
+  onSearch(event: any) {
+    const query = event.target.value;
+    this.blogService.performSearch(query);
   }
 }
