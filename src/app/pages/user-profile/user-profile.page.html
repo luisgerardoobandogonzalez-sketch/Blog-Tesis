@@ -13,11 +13,23 @@
   </div>
 
   <div *ngIf="!isLoading && userProfile">
+    
     <ion-avatar class="profile-avatar">
-      <img [src]="userProfile.profile_picture_url || 'assets/icon/favicon.png'" />
+      <img [src]="userProfile.profile_picture_url || 'assets/images/avatar.png'" />
     </ion-avatar>
+    
     <h1 class="profile-name">{{ userProfile.firstName }} {{ userProfile.lastName }}</h1>
-    <p class="profile-email">{{ userProfile.email }} - Miembro desde {{ userProfile.created_at | date:'mediumDate':'es-GT' }}</p>
+    
+    <div class="rating-display">
+      <app-star-rating [rating]="userRating.average"></app-star-rating>
+      <span class="ion-padding-start" *ngIf="userRating.count > 0">
+        {{ userRating.average | number:'1.1-1' }} ({{ userRating.count }} votos)
+      </span>
+      <span class="ion-padding-start" *ngIf="userRating.count === 0">
+        Sin calificaciones
+      </span>
+    </div>
+    <p class="profile-email"> Miembro desde {{ userProfile.created_at | date:'mediumDate':'es-GT' }}</p>
 
     <div class="profile-stats">
       <div class="stat-item">
@@ -42,6 +54,18 @@
       {{ isFollowing ? 'Siguiendo' : 'Seguir' }}
     </ion-button>
 
+    <ion-card *ngIf="(isAuthenticated$ | async) && !isCurrentUserProfile">
+      <ion-card-header>
+        <ion-card-title>Califica a este usuario</ion-card-title>
+      </ion-card-header>
+      <ion-card-content class="ion-text-center">
+        <app-star-rating 
+          [isInteractive]="true"
+          [rating]="currentUserRating"
+          (ratingChange)="rateThisUser($event)">
+        </app-star-rating>
+      </ion-card-content>
+    </ion-card>
     <ion-list-header>Publicaciones</ion-list-header>
     <div *ngIf="userBlogs.length > 0; else noBlogs">
       <ion-card *ngFor="let blog of userBlogs" [routerLink]="['/blog', blog._id]" button>

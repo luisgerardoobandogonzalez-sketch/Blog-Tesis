@@ -37,6 +37,11 @@ export namespace UserModels {
       show_email: 'all' | 'followers' | 'none';
       show_activity: 'all' | 'followers' | 'none';
     };
+
+    average_rating?: number; 
+    rating_count?: number; 
   }
+
+  
 
 }

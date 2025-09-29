@@ -8,7 +8,7 @@ import { AuthService } from './core/services/auth';
 import { addIcons } from 'ionicons';
 
 // 2. Importa los íconos que vas a usar (usa el nombre en camelCase)
-import { homeOutline, personOutline, createOutline, settingsOutline, menuOutline, logOutOutline, personCircleOutline, searchOutline, logInOutline, logoFacebook, logoGoogle, analyticsOutline, peopleOutline, eyeOutline, pencilOutline, banOutline, barChartOutline, checkmarkCircle, atCircleOutline, checkmarkCircleOutline, heartOutline, chatbubbleOutline, heart, sendOutline, trashOutline, notificationsOutline, arrowBackOutline, documentTextOutline, starOutline, star, checkmarkDoneOutline, closeCircleOutline, shieldCheckmark, shieldCheckmarkOutline, alertCircleOutline } from 'ionicons/icons';
+import { homeOutline, personOutline, createOutline, settingsOutline, menuOutline, logOutOutline, personCircleOutline, searchOutline, logInOutline, logoFacebook, logoGoogle, analyticsOutline, peopleOutline, eyeOutline, pencilOutline, banOutline, barChartOutline, checkmarkCircle, atCircleOutline, checkmarkCircleOutline, heartOutline, chatbubbleOutline, heart, sendOutline, trashOutline, notificationsOutline, arrowBackOutline, documentTextOutline, starOutline, star, checkmarkDoneOutline, closeCircleOutline, shieldCheckmark, shieldCheckmarkOutline, alertCircleOutline, chatbubble, personAdd } from 'ionicons/icons';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AdminMenuComponent } from './admin/admin-menu/admin-menu.component';
@@ -71,7 +71,8 @@ export class AppComponent {
   closeCircleOutline,
   shieldCheckmarkOutline,
   alertCircleOutline,
-     
+  chatbubble,
+  personAdd,
 
     });
   }

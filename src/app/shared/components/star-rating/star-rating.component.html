@@ -1,0 +1,13 @@
+<div 
+  class="star-rating-container" 
+  [class.interactive]="isInteractive"
+  (mouseleave)="onMouseLeave()">
+  
+  <ion-icon 
+    *ngFor="let star of stars"
+    [name]="star <= (hoverRating || rating) ? 'star' : 'star-outline'"
+    (mouseover)="onStarHover(star)"
+    (click)="onStarClick(star)">
+  </ion-icon>
+
+</div>

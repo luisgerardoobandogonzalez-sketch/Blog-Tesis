@@ -7,13 +7,15 @@ import { BlogService } from 'src/app/shared/services/blog';
 import { Models } from 'src/app/shared/models/models';
 import { UserService } from 'src/app/shared/services/user'; 
 import { AuthService } from 'src/app/core/services/auth';
+import { StarRatingComponent } from 'src/app/shared/components/star-rating/star-rating.component';
+import { Observable } from 'rxjs'; // Importa Observable
 
 @Component({
   selector: 'app-user-profile',
   templateUrl: './user-profile.page.html',
   styleUrls: ['./user-profile.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule,RouterLink]
+  imports: [IonicModule, CommonModule,RouterLink,StarRatingComponent]
 })
 export class UserProfilePage implements OnInit {
   userProfile: Models.User.User | null | undefined = null;
@@ -23,6 +25,9 @@ export class UserProfilePage implements OnInit {
   followingCount = 0;
   isFollowing = false;
   isCurrentUserProfile = false;
+   userRating = { average: 0, count: 0 };
+   isAuthenticated$: Observable<boolean>;
+  currentUserRating:number = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -30,7 +35,7 @@ export class UserProfilePage implements OnInit {
     private blogService: BlogService,
     private userService: UserService, // Inyéctalo
     private authService: AuthService
-  ) { }
+  ) {    this.isAuthenticated$ = this.authService.isAuthenticated$; }
 
   ngOnInit() {
     const userId = this.route.snapshot.paramMap.get('id');
@@ -43,7 +48,12 @@ export class UserProfilePage implements OnInit {
         this.blogService.getBlogsByAuthorId(userId).subscribe(blogs => {
           this.userBlogs = blogs;
           this.isLoading = false;
+
+          
         });
+      });
+       this.userService.getRatingForUser(userId).subscribe(rating => {
+        this.userRating = rating;
       });
     }
   }
@@ -87,7 +97,20 @@ export class UserProfilePage implements OnInit {
     });
   }
 
-
+rateThisUser(rating: number) {
+    if (this.userProfile) {
+      this.currentUserRating = rating;
+      
+      // Le decimos a TypeScript que confíe en que el número es del 1 al 5
+      const ratingValue = rating as 1 | 2 | 3 | 4 | 5;
+      
+      this.userService.rateUser(this.userProfile.id, ratingValue)
+        .subscribe(() => {
+          console.log(`Has calificado a ${this.userProfile?.firstName} con ${rating} estrellas.`);
+          // Aquí se recargaría el promedio en una app real
+        });
+    }
+  }
 
 
 }

@@ -10,12 +10,13 @@ import { Router, RouterLink } from '@angular/router';
 import { UserService } from 'src/app/shared/services/user'; // Importa UserService
 import { Subscription } from 'rxjs';
 
+
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule,GenderTranslatePipe,RouterLink]
+  imports: [IonicModule, CommonModule,GenderTranslatePipe,RouterLink,]
 })
 export class ProfilePage implements OnInit {
 
