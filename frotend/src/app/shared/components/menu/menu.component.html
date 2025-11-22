@@ -5,19 +5,26 @@
       <mat-icon matListItemIcon>home</mat-icon>
       <span matListItemTitle>Inicio</span>
     </a>
-    <a mat-list-item routerLink="/profile" routerLinkActive="active-list-item" (click)="closeMenu()" *ngIf="isAuthenticated$ | async">
+    <a mat-list-item routerLink="/profile" routerLinkActive="active-list-item" (click)="closeMenu()"
+      *ngIf="isAuthenticated$ | async">
       <mat-icon matListItemIcon>person</mat-icon>
       <span matListItemTitle>Mi Perfil</span>
     </a>
-    
+    <a mat-list-item routerLink="/favorites" routerLinkActive="active-list-item" (click)="closeMenu()"
+      *ngIf="isAuthenticated$ | async">
+      <mat-icon matListItemIcon>bookmarks</mat-icon>
+      <span matListItemTitle>Guardados</span>
+    </a>
+
     <mat-divider></mat-divider>
-    
+
     <h3 matSubheader>Acciones</h3>
     <a mat-list-item (click)="openCreateBlogModal()">
       <mat-icon matListItemIcon>edit_square</mat-icon>
       <span matListItemTitle>Escribir Blog</span>
     </a>
-    <a mat-list-item routerLink="/settings" routerLinkActive="active-list-item" (click)="closeMenu()" *ngIf="isAuthenticated$ | async">
+    <a mat-list-item routerLink="/settings" routerLinkActive="active-list-item" (click)="closeMenu()"
+      *ngIf="isAuthenticated$ | async">
       <mat-icon matListItemIcon>settings</mat-icon>
       <span matListItemTitle>Configuración</span>
     </a>

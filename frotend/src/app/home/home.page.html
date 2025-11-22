@@ -29,26 +29,32 @@
       <ion-row>
         <ion-col size="6">
           <ion-item>
-            <ion-select label="Carrera" interface="popover" [(ngModel)]="selectedFilters.career" (ionChange)="onFilterChange()">
+            <ion-select label="Carrera" interface="popover" [(ngModel)]="selectedFilters.career"
+              (ionChange)="onFilterChange()">
               <ion-select-option value="all">Todas</ion-select-option>
-              <ion-select-option *ngFor="let career of availableCareers" [value]="career">{{ career }}</ion-select-option>
+              <ion-select-option *ngFor="let career of availableCareers" [value]="career">{{ career
+                }}</ion-select-option>
             </ion-select>
           </ion-item>
         </ion-col>
         <ion-col size="6">
           <ion-item>
-            <ion-select label="Categoría" interface="popover" [(ngModel)]="selectedFilters.category" (ionChange)="onFilterChange()">
+            <ion-select label="Categoría" interface="popover" [(ngModel)]="selectedFilters.category"
+              (ionChange)="onFilterChange()">
               <ion-select-option value="all">Todas</ion-select-option>
-              <ion-select-option *ngFor="let category of availableCategories" [value]="category">{{ category }}</ion-select-option>
+              <ion-select-option *ngFor="let category of availableCategories" [value]="category">{{ category
+                }}</ion-select-option>
             </ion-select>
           </ion-item>
         </ion-col>
       </ion-row>
     </ion-grid>
+
     <div *ngIf="allBlogs.length === 0" class="ion-text-center ion-padding">
       <h3>¡Bienvenido!</h3>
       <p>Aún no hay blogs publicados. ¡Sé el primero en escribir uno!</p>
     </div>
+
     <div *ngIf="allBlogs.length > 0 && displayedBlogs.length === 0" class="ion-text-center ion-padding">
       <h3>No se encontraron resultados</h3>
       <p>Intenta con otra búsqueda o filtro.</p>
@@ -58,14 +64,22 @@
       <ion-card *ngFor="let blog of displayedBlogs" (click)="viewBlogDetail(blog._id)" button>
         <ion-card-header>
           <ion-card-title>{{ blog.title }}</ion-card-title>
-          <ion-card-subtitle>Por: {{ blog.author_id }} | {{ blog.created_at | date:'mediumDate':'es-GT' }}</ion-card-subtitle>
+          <ion-card-subtitle>Por: {{ blog.author_id }} | {{ blog.created_at | date:'mediumDate':'es-GT'
+            }}</ion-card-subtitle>
         </ion-card-header>
         <ion-card-content>
           {{ blog.excerpt }}
-          <ion-button (click)="toggleLikeOnList(blog, $event)" fill="clear" size="small" [color]="blog.currentUserHasLiked ? 'danger' : 'medium'" class="ion-float-right">
-            <ion-icon slot="start" [name]="blog.currentUserHasLiked ? 'heart' : 'heart-outline'"></ion-icon>
-            {{ blog.likes_count }}
-          </ion-button>
+          <div class="blog-actions">
+            <ion-button (click)="toggleLikeOnList(blog, $event)" fill="clear" size="small"
+              [color]="blog.currentUserHasLiked ? 'danger' : 'medium'">
+              <ion-icon slot="start" [name]="blog.currentUserHasLiked ? 'heart' : 'heart-outline'"></ion-icon>
+              {{ blog.likes_count }}
+            </ion-button>
+            <ion-button (click)="toggleBookmark(blog._id, $event)" fill="clear" size="small"
+              [color]="isBlogSaved(blog._id) ? 'warning' : 'medium'">
+              <ion-icon slot="icon-only" [name]="isBlogSaved(blog._id) ? 'bookmark' : 'bookmark-outline'"></ion-icon>
+            </ion-button>
+          </div>
         </ion-card-content>
       </ion-card>
     </ion-list>

@@ -17,11 +17,11 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/settings/settings.page').then(m => m.SettingsPage),
     canActivate: [AuthGuard] // Protegemos la ruta de configuración
   },
-   {
+  {
     path: 'blog/:id', // ':id' es un parámetro que contendrá el ID del blog
-    loadComponent: () => import('./shared/components/blog-item/blog-item.component').then( m => m.BlogItemComponent)
+    loadComponent: () => import('./shared/components/blog-item/blog-item.component').then(m => m.BlogItemComponent)
   },
- {
+  {
     path: 'admin',
     canActivate: [AuthGuard, AdminGuard],
     children: [ // Los hijos ahora cuelgan directamente de /admin
@@ -32,13 +32,18 @@ export const routes: Routes = [
       { path: 'reports', loadComponent: () => import('./admin/reports/reports.page').then(p => p.ReportsPage) },
     ]
   },
-   {
+  {
     path: 'user/:id', // Perfil de un usuario específico por ID
-    loadComponent: () => import('./pages/user-profile/user-profile.page').then( m => m.UserProfilePage)
+    loadComponent: () => import('./pages/user-profile/user-profile.page').then(m => m.UserProfilePage)
   },
-   {
+  {
     path: 'notifications',
-    loadComponent: () => import('./pages/notifications/notifications.page').then( m => m.NotificationsPage),
+    loadComponent: () => import('./pages/notifications/notifications.page').then(m => m.NotificationsPage),
+    canActivate: [AuthGuard] // <-- Protegida, solo para usuarios logueados
+  },
+  {
+    path: 'favorites',
+    loadComponent: () => import('./pages/favorites/favorites.page').then(m => m.FavoritesPage),
     canActivate: [AuthGuard] // <-- Protegida, solo para usuarios logueados
   },
   {
@@ -48,17 +53,7 @@ export const routes: Routes = [
   },
   {
     path: 'user-profile',
-    loadComponent: () => import('./pages/user-profile/user-profile.page').then( m => m.UserProfilePage)
+    loadComponent: () => import('./pages/user-profile/user-profile.page').then(m => m.UserProfilePage)
   },
-  {
-    path: 'notifications',
-    loadComponent: () => import('./pages/notifications/notifications.page').then( m => m.NotificationsPage)
-  },
-  {
-    path: 'reports',
-    loadComponent: () => import('./admin/reports/reports.page').then( m => m.ReportsPage)
-  },
-
-
 
 ];

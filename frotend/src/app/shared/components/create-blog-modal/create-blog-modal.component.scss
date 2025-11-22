@@ -1,0 +1,66 @@
+::ng-deep .quill-container {
+    .editor-wrapper {
+        width: 100%;
+        margin-top: var(--spacing-md);
+
+        ion-label {
+            margin-bottom: var(--spacing-sm);
+        }
+    }
+
+    quill-editor {
+        display: block;
+        border: 1px solid var(--ion-color-medium);
+        border-radius: var(--border-radius-md);
+        background: var(--ion-color-light);
+
+        .ql-toolbar {
+            border-top-left-radius: var(--border-radius-md);
+            border-top-right-radius: var(--border-radius-md);
+            background: var(--surface-1);
+            border-bottom: 1px solid var(--ion-color-medium);
+        }
+
+        .ql-container {
+            border-bottom-left-radius: var(--border-radius-md);
+            border-bottom-right-radius: var(--border-radius-md);
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .ql-editor {
+            min-height: 300px;
+            max-height: 500px;
+            overflow-y: auto;
+
+            &.ql-blank::before {
+                color: var(--ion-color-medium);
+                font-style: italic;
+            }
+        }
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    ::ng-deep .quill-container quill-editor {
+        background: var(--ion-color-step-50);
+        border-color: var(--ion-color-step-200);
+
+        .ql-toolbar {
+            background: var(--ion-color-step-100);
+            border-bottom-color: var(--ion-color-step-200);
+        }
+
+        .ql-stroke {
+            stroke: var(--ion-color-light);
+        }
+
+        .ql-fill {
+            fill: var(--ion-color-light);
+        }
+
+        .ql-picker-label {
+            color: var(--ion-color-light);
+        }
+    }
+}

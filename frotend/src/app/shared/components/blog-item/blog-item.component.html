@@ -39,10 +39,10 @@
       <ion-img *ngFor="let imageUrl of blog.images" [src]="imageUrl" alt="Imagen del blog"></ion-img>
     </div>
 
-    <div class="blog-content" [innerHTML]="blog.content"></div>
+    <div [innerHTML]="sanitizedContent" class="blog-content"></div>
 
     <ion-item-divider></ion-item-divider>
-   <app-comment-section [blogId]="blog._id" [blogAuthorId]="blog.author_id"></app-comment-section>
-    
+    <app-comment-section [blogId]="blog._id" [blogAuthorId]="blog.author_id"></app-comment-section>
+
   </div>
 </ion-content>

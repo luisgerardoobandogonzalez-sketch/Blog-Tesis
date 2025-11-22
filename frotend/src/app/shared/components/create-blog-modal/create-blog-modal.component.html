@@ -10,28 +10,22 @@
 <ion-content class="ion-padding">
   <ion-list>
     <ion-item>
-      <ion-input
-        label="Título"
-        labelPlacement="floating"
-        placeholder="Un título increíble"
-        [(ngModel)]="blogData.title"
+      <ion-input label="Título" labelPlacement="floating" placeholder="Un título increíble" [(ngModel)]="blogData.title"
         required>
       </ion-input>
     </ion-item>
 
-    <ion-item>
-      <ion-textarea
-        label="Contenido"
-        labelPlacement="floating"
-        placeholder="Escribe tu historia aquí..."
-        [autoGrow]="true"
-        [(ngModel)]="blogData.content"
-        required>
-      </ion-textarea>
+    <ion-item lines="none" class="quill-container">
+      <div class="editor-wrapper">
+        <ion-label position="stacked">Contenido</ion-label>
+        <quill-editor [(ngModel)]="blogData.content" [modules]="quillModules" placeholder="Escribe tu historia aquí..."
+          [styles]="{height: '300px'}" format="html">
+        </quill-editor>
+      </div>
     </ion-item>
 
     <ion-item>
-       <ion-select label="Carrera Asociada" placeholder="Selecciona una" [(ngModel)]="blogData.career">
+      <ion-select label="Carrera Asociada" placeholder="Selecciona una" [(ngModel)]="blogData.career">
         <ion-select-option value="Ingenieria de Sistemas">Ingeniería de Sistemas</ion-select-option>
         <ion-select-option value="Derecho">Derecho</ion-select-option>
         <ion-select-option value="Medicina">Medicina</ion-select-option>
@@ -39,16 +33,14 @@
     </ion-item>
 
     <ion-item>
-      <ion-input
-        label="Etiquetas"
-        labelPlacement="floating"
-        placeholder="Ej: angular, ionic, desarrollo (separadas por coma)"
-        [(ngModel)]="blogData.tagsInput">
+      <ion-input label="Etiquetas" labelPlacement="floating"
+        placeholder="Ej: angular, ionic, desarrollo (separadas por coma)" [(ngModel)]="blogData.tagsInput">
       </ion-input>
     </ion-item>
   </ion-list>
 
-  <ion-button expand="block" (click)="publish()" [disabled]="!blogData.title || !blogData.content" class="ion-margin-top">
+  <ion-button expand="block" (click)="publish()" [disabled]="!blogData.title || !blogData.content"
+    class="ion-margin-top">
     Publicar
   </ion-button>
 </ion-content>

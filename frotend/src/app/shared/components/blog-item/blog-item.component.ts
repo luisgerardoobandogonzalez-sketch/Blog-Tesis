@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
-import { ActivatedRoute } from '@angular/router'; 
+import { ActivatedRoute } from '@angular/router';
 import { BlogService } from 'src/app/shared/services/blog';
 import { Models } from 'src/app/shared/models/models';
 import { CommentSectionComponent } from '../comment-section/comment-section.component';
@@ -10,17 +10,18 @@ import { AuthModalComponent } from 'src/app/shared/components/auth-modal/auth-mo
 import { take } from 'rxjs/operators';
 import { ModalController } from '@ionic/angular';
 import { EditBlogModalComponent } from 'src/app/shared/components/edit-blog-modal/edit-blog-modal.component';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-blog-item',
   templateUrl: './blog-item.component.html',
   styleUrls: ['./blog-item.component.scss'],
-    standalone: true,
-  imports: [IonicModule, CommonModule,CommentSectionComponent]
+  standalone: true,
+  imports: [IonicModule, CommonModule, CommentSectionComponent]
 })
-export class BlogItemComponent  implements OnInit {
+export class BlogItemComponent implements OnInit {
 
-
+  sanitizedContent?: SafeHtml;
   blog: Models.Blog.Blog | null = null;
   isLoading = true;
   currentUser: Models.User.User | null = null;
@@ -29,7 +30,8 @@ export class BlogItemComponent  implements OnInit {
     private route: ActivatedRoute,
     private blogService: BlogService,
     private AuthService: AuthService,     // <-- Inyéctalo
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private sanitizer: DomSanitizer
   ) { }
 
   ngOnInit() {
@@ -42,6 +44,12 @@ export class BlogItemComponent  implements OnInit {
       this.blogService.getBlogById(blogId).subscribe(data => {
         this.blog = data; // 3. Guardamos los datos del blog
         this.isLoading = false;
+
+        // Sanitizar el contenido HTML después de cargar el blog
+        if (this.blog) {
+          this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(this.blog.content);
+        }
+
       });
     }
   }
@@ -63,7 +71,7 @@ export class BlogItemComponent  implements OnInit {
       }
     });
   }
-  
+
   // --- NUEVA FUNCIÓN DE AYUDA ---
   async openAuthModal() {
     const modal = await this.modalCtrl.create({
@@ -73,7 +81,7 @@ export class BlogItemComponent  implements OnInit {
   }
 
 
- async openEditModal() {
+  async openEditModal() {
     if (!this.blog) return;
 
     const modal = await this.modalCtrl.create({

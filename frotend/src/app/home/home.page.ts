@@ -1,4 +1,4 @@
-import { Component, OnDestroy,OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BlogService } from 'src/app/shared/services/blog';
 import { Models } from 'src/app/shared/models/models';
 import { Router } from '@angular/router';
@@ -6,11 +6,12 @@ import { IonicModule, ModalController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../core/services/auth';
 import { CreateBlogModalComponent } from 'src/app/shared/components/create-blog-modal/create-blog-modal.component';
-import { Subscription } from 'rxjs'; // Importa Subscription
+import { Subscription } from 'rxjs';
 import { AuthModalComponent } from 'src/app/shared/components/auth-modal/auth-modal.component';
 import { take } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
 import { AlertController } from '@ionic/angular';
+import { FavoritesService } from 'src/app/shared/services/favorites';
 
 
 @Component({
@@ -21,51 +22,53 @@ import { AlertController } from '@ionic/angular';
 })
 export class HomePage implements OnInit, OnDestroy {
 
-   
-  public allBlogs: Models.Blog.Blog[] = []; // Guardará la lista original y completa de blogs
-  public displayedBlogs: Models.Blog.Blog[] = []; // Esta es la lista que se muestra y se filtra
+
+  public allBlogs: Models.Blog.Blog[] = [];
+  public displayedBlogs: Models.Blog.Blog[] = [];
   public isLoading = true;
   private blogAddedSubscription!: Subscription;
   private searchSubscription!: Subscription;
-   
+  private savedBlogIds: Set<string> = new Set();
 
-   public availableCareers: string[] = [];
+
+  public availableCareers: string[] = [];
   public availableCategories: string[] = [];
   public selectedFilters = {
-    career: 'all', // Valor por defecto
-    category: 'all' // Valor por defecto
+    career: 'all',
+    category: 'all'
   };
-  
+
 
   constructor(
     private blogService: BlogService,
-    private authService: AuthService, // Inyecta AuthService
-    private modalCtrl: ModalController, // Inyecta ModalController
+    private authService: AuthService,
+    private modalCtrl: ModalController,
     private router: Router,
-    private alertCtrl: AlertController
-  ) {}
+    private alertCtrl: AlertController,
+    private favoritesService: FavoritesService
+  ) { }
 
   ngOnInit() {
     this.loadAllBlogs();
-    // Nos suscribimos a los eventos de nuevos blogs
+    this.loadSavedBlogs();
+
     this.blogAddedSubscription = this.blogService.blogAdded$.subscribe(() => {
-      this.loadAllBlogs(); // Recargamos los blogs cuando se añade uno nuevo
+      this.loadAllBlogs();
     });
-     this.searchSubscription = this.blogService.searchQuery$.subscribe(query => {
+    this.searchSubscription = this.blogService.searchQuery$.subscribe(query => {
       this.blogService.searchBlogs(query).subscribe(results => {
         this.displayedBlogs = results;
       });
     });
   }
-   ngOnDestroy() {
-    // Es una buena práctica desuscribirse para evitar fugas de memoria
+
+  ngOnDestroy() {
     this.blogAddedSubscription.unsubscribe();
     if (this.searchSubscription) this.searchSubscription.unsubscribe();
   }
 
-    loadAllBlogs() {
+  loadAllBlogs() {
     this.isLoading = true;
-    // Ahora pasamos los filtros seleccionados al servicio
     this.blogService.getBlogs(this.selectedFilters).subscribe(data => {
       this.allBlogs = data;
       this.displayedBlogs = data;
@@ -73,15 +76,45 @@ export class HomePage implements OnInit, OnDestroy {
     });
   }
 
+  loadSavedBlogs() {
+    this.favoritesService.getFavorites().subscribe(savedBlogs => {
+      this.savedBlogIds = new Set(savedBlogs.map(blog => blog._id));
+    });
+  }
 
+  isBlogSaved(blogId: string): boolean {
+    return this.savedBlogIds.has(blogId);
+  }
 
-  // Esta función te servirá para cuando el usuario haga clic en un blog
+  toggleBookmark(blogId: string, event: Event) {
+    event.stopPropagation();
+
+    this.authService.isAuthenticated$.pipe(take(1)).subscribe(isAuth => {
+      if (isAuth) {
+        if (this.isBlogSaved(blogId)) {
+          this.favoritesService.unsaveBlog(blogId).subscribe(success => {
+            if (success) {
+              this.savedBlogIds.delete(blogId);
+            }
+          });
+        } else {
+          this.favoritesService.saveBlog(blogId).subscribe(success => {
+            if (success) {
+              this.savedBlogIds.add(blogId);
+            }
+          });
+        }
+      } else {
+        this.openAuthModal();
+      }
+    });
+  }
+
   viewBlogDetail(blogId: string) {
-    // Usamos el router para navegar a la nueva ruta, ej: '/blog/abcde12345'
     this.router.navigate(['/blog', blogId]);
   }
 
-   async openCreateBlogModal() {
+  async openCreateBlogModal() {
     const currentUser = this.authService.getUserProfile();
     if (!currentUser) {
       this.openAuthModal();
@@ -96,7 +129,6 @@ export class HomePage implements OnInit, OnDestroy {
     const { data, role } = await modal.onWillDismiss();
     if (role === 'confirm' && data) {
       this.blogService.createBlog(data, currentUser.id).subscribe(newBlog => {
-        // Revisa el estado de moderación del nuevo blog
         if (newBlog.moderation.status === 'pending') {
           this.showModerationAlert();
         }
@@ -104,7 +136,7 @@ export class HomePage implements OnInit, OnDestroy {
     }
   }
 
-    async showModerationAlert() {
+  async showModerationAlert() {
     const alert = await this.alertCtrl.create({
       header: 'Publicación en Revisión',
       message: 'Tu publicación contiene palabras que requieren revisión. Un administrador la revisará y aprobará pronto.',
@@ -113,26 +145,22 @@ export class HomePage implements OnInit, OnDestroy {
     await alert.present();
   }
 
+  toggleLikeOnList(blog: Models.Blog.Blog, event: Event) {
+    event.stopPropagation();
 
- toggleLikeOnList(blog: Models.Blog.Blog, event: Event) {
-    event.stopPropagation(); // Previene la navegación
-    
     this.authService.isAuthenticated$.pipe(take(1)).subscribe(isAuth => {
       if (isAuth) {
-        // Lógica de siempre
         if (blog.currentUserHasLiked) {
           this.blogService.unlikeBlog(blog._id).subscribe();
         } else {
           this.blogService.likeBlog(blog._id).subscribe();
         }
       } else {
-        // Abrir modal
         this.openAuthModal();
       }
     });
   }
 
-  // --- NUEVA FUNCIÓN DE AYUDA ---
   async openAuthModal() {
     const modal = await this.modalCtrl.create({
       component: AuthModalComponent,
@@ -140,12 +168,11 @@ export class HomePage implements OnInit, OnDestroy {
     await modal.present();
   }
 
-    loadFilterOptions() {
+  loadFilterOptions() {
     this.blogService.getAvailableCareers().subscribe(careers => this.availableCareers = careers);
     this.blogService.getAvailableCategories().subscribe(categories => this.availableCategories = categories);
   }
 
-  // --- NUEVA FUNCIÓN QUE SE LLAMA AL CAMBIAR UN FILTRO ---
   onFilterChange() {
     console.log('Filtros aplicados:', this.selectedFilters);
     this.loadAllBlogs();
