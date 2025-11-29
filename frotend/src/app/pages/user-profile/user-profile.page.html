@@ -1,35 +1,111 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/admin/users"></ion-back-button>
+      <ion-back-button defaultHref="/home"></ion-back-button>
     </ion-buttons>
     <ion-title>Perfil de Usuario</ion-title>
+    <ion-buttons slot="end">
+      @if (isCurrentUserProfile) {
+      <ion-button (click)="openEditProfile()">
+        <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+      </ion-button>
+      }
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <div *ngIf="isLoading" class="ion-text-center">
+  @if (isLoading) {
+  <div class="ion-text-center">
     <ion-spinner></ion-spinner>
   </div>
+  }
 
-  <div *ngIf="!isLoading && userProfile">
-    
-    <ion-avatar class="profile-avatar">
-      <img [src]="userProfile.profile_picture_url || 'assets/images/avatar.png'" />
-    </ion-avatar>
-    
-    <h1 class="profile-name">{{ userProfile.firstName }} {{ userProfile.lastName }}</h1>
-    
-    <div class="rating-display">
-      <app-star-rating [rating]="userRating.average"></app-star-rating>
-      <span class="ion-padding-start" *ngIf="userRating.count > 0">
-        {{ userRating.average | number:'1.1-1' }} ({{ userRating.count }} votos)
-      </span>
-      <span class="ion-padding-start" *ngIf="userRating.count === 0">
-        Sin calificaciones
-      </span>
+  @if (!isLoading && userProfile) {
+  <div>
+    <div class="profile-header ion-text-center">
+      <ion-avatar class="profile-avatar">
+        <img [src]="userProfile.profile_picture_url || 'assets/images/avatar.png'" />
+      </ion-avatar>
+      <h1 class="profile-name">{{ userProfile.firstName }} {{ userProfile.lastName }}</h1>
+
+      @if (userProfile.career) {
+      <p class="profile-career">{{ userProfile.career }}</p>
+      }
+
+      <div class="rating-display">
+        <app-star-rating [rating]="userRating.average"></app-star-rating>
+        @if (userRating.count > 0) {
+        <span class="ion-padding-start">
+          {{ userRating.average | number:'1.1-1' }} ({{ userRating.count }} votos)
+        </span>
+        }
+        @if (userRating.count === 0) {
+        <span class="ion-padding-start">
+          Sin calificaciones
+        </span>
+        }
+      </div>
+
+      <!-- Redes Sociales -->
+      @if (userProfile.social_links) {
+      <div class="social-links">
+        @if (userProfile.social_links.linkedin) {
+        <a [href]="userProfile.social_links.linkedin" target="_blank"><ion-icon name="logo-linkedin"></ion-icon></a>
+        }
+        @if (userProfile.social_links.github) {
+        <a [href]="userProfile.social_links.github" target="_blank"><ion-icon name="logo-github"></ion-icon></a>
+        }
+        @if (userProfile.social_links.twitter) {
+        <a [href]="userProfile.social_links.twitter" target="_blank"><ion-icon name="logo-twitter"></ion-icon></a>
+        }
+      </div>
+      }
     </div>
-    <p class="profile-email"> Miembro desde {{ userProfile.created_at | date:'mediumDate':'es-GT' }}</p>
+
+    <!-- Biografía -->
+    @if (userProfile.bio) {
+    <div class="profile-bio ion-padding-vertical">
+      <p>{{ userProfile.bio }}</p>
+    </div>
+    }
+
+    <!-- SECCIÓN DE GAMIFICACIÓN -->
+    @if (userLevel && userXP) {
+    <div class="gamification-section ion-margin-top">
+      <div class="level-badge" [style.background-color]="userLevel.color">
+        <ion-icon [name]="userLevel.icon"></ion-icon>
+        <span>Nivel {{ userLevel.level }}: {{ userLevel.name }}</span>
+      </div>
+
+      <div class="xp-progress-container">
+        <div class="xp-info">
+          <span class="xp-current">{{ userXP.xp_in_current_level }} XP</span>
+          <span class="xp-next">Siguiente nivel: {{ userXP.xp_to_next_level }} XP más</span>
+        </div>
+        <ion-progress-bar [value]="progressToNextLevel / 100" [color]="'primary'"></ion-progress-bar>
+      </div>
+
+      @if (userBadges.length > 0) {
+      <div class="badges-container ion-margin-top">
+        <h3>Insignias</h3>
+        <div class="badges-grid">
+          @for (badge of userBadges; track badge) {
+          <div class="badge-item">
+            <div class="badge-icon">
+              <ion-icon [name]="badge.icon"></ion-icon>
+            </div>
+            <span class="badge-name">{{ badge.name }}</span>
+          </div>
+          }
+        </div>
+      </div>
+      }
+    </div>
+    }
+
+    <p class="profile-email ion-text-center ion-margin-top"> Miembro desde {{ userProfile.created_at |
+      date:'mediumDate':'es-GT' }}</p>
 
     <div class="profile-stats">
       <div class="stat-item">
@@ -44,37 +120,53 @@
         <strong>{{ followingCount }}</strong>
         <span>Siguiendo</span>
       </div>
+      <div class="stat-item">
+        <strong>{{ totalLikesReceived }}</strong>
+        <span>Likes</span>
+      </div>
+      <div class="stat-item">
+        <strong>{{ totalCommentsReceived }}</strong>
+        <span>Comentarios</span>
+      </div>
     </div>
 
-    <ion-button 
-      *ngIf="!isCurrentUserProfile" 
-      expand="block" 
-      [fill]="isFollowing ? 'solid' : 'outline'" 
-      (click)="toggleFollow()">
+    @if (!isCurrentUserProfile) {
+    <ion-button expand="block" [fill]="isFollowing ? 'solid' : 'outline'" (click)="toggleFollow()">
       {{ isFollowing ? 'Siguiendo' : 'Seguir' }}
     </ion-button>
+    <ion-button expand="block" fill="outline" color="medium" (click)="startChat()">
+      <ion-icon name="chatbubble-outline" slot="start"></ion-icon>
+      Enviar Mensaje
+    </ion-button>
+    }
 
-    <ion-card *ngIf="(isAuthenticated$ | async) && !isCurrentUserProfile">
+    @if ((isAuthenticated$ | async) && !isCurrentUserProfile) {
+    <ion-card>
       <ion-card-header>
         <ion-card-title>Califica a este usuario</ion-card-title>
       </ion-card-header>
       <ion-card-content class="ion-text-center">
-        <app-star-rating 
-          [isInteractive]="true"
-          [rating]="currentUserRating"
-          (ratingChange)="rateThisUser($event)">
+        <app-star-rating [isInteractive]="true" [rating]="currentUserRating" (ratingChange)="rateThisUser($event)">
         </app-star-rating>
       </ion-card-content>
     </ion-card>
+    }
+
     <ion-list-header>Publicaciones</ion-list-header>
-    <div *ngIf="userBlogs.length > 0; else noBlogs">
-      <ion-card *ngFor="let blog of userBlogs" [routerLink]="['/blog', blog._id]" button>
+    @if (userBlogs.length > 0) {
+    <div>
+      @for (blog of userBlogs; track blog) {
+      <ion-card [routerLink]="['/blog', blog._id]" button>
         <ion-card-header>
           <ion-card-title>{{ blog.title }}</ion-card-title>
         </ion-card-header>
         <ion-card-content>{{ blog.excerpt }}</ion-card-content>
       </ion-card>
+      }
     </div>
-    <ng-template #noBlogs><p class="ion-padding-start">Este usuario aún no ha publicado nada.</p></ng-template>
+    } @else {
+    <p class="ion-padding-start">Este usuario aún no ha publicado nada.</p>
+    }
   </div>
+  }
 </ion-content>

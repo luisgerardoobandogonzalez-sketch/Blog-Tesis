@@ -1,0 +1,67 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-button (click)="cancel()">Cancelar</ion-button>
+        </ion-buttons>
+        <ion-title>Editar Perfil</ion-title>
+        <ion-buttons slot="end">
+            <ion-button (click)="confirm()" [strong]="true" [disabled]="!profileForm.valid">Guardar</ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+    <form [formGroup]="profileForm">
+
+        <div class="avatar-section">
+            <ion-avatar class="large-avatar">
+                <img [src]="profileForm.get('profile_picture_url')?.value || 'assets/images/avatar.png'" />
+            </ion-avatar>
+            <ion-item lines="none">
+                <ion-input label="URL de Foto" labelPlacement="floating" formControlName="profile_picture_url"
+                    placeholder="https://..."></ion-input>
+            </ion-item>
+        </div>
+
+        <ion-list>
+            <ion-list-header>Información Personal</ion-list-header>
+
+            <ion-item>
+                <ion-input label="Nombre" labelPlacement="floating" formControlName="firstName"></ion-input>
+            </ion-item>
+
+            <ion-item>
+                <ion-input label="Apellido" labelPlacement="floating" formControlName="lastName"></ion-input>
+            </ion-item>
+
+            <ion-item>
+                <ion-input label="Carrera" labelPlacement="floating" formControlName="career"></ion-input>
+            </ion-item>
+
+            <ion-item>
+                <ion-textarea label="Biografía" labelPlacement="floating" formControlName="bio" [autoGrow]="true"
+                    rows="3" maxlength="500"></ion-textarea>
+            </ion-item>
+        </ion-list>
+
+        <ion-list>
+            <ion-list-header>Redes Sociales</ion-list-header>
+
+            <ion-item>
+                <ion-icon name="logo-linkedin" slot="start"></ion-icon>
+                <ion-input label="LinkedIn URL" labelPlacement="floating" formControlName="linkedin"></ion-input>
+            </ion-item>
+
+            <ion-item>
+                <ion-icon name="logo-github" slot="start"></ion-icon>
+                <ion-input label="GitHub URL" labelPlacement="floating" formControlName="github"></ion-input>
+            </ion-item>
+
+            <ion-item>
+                <ion-icon name="logo-twitter" slot="start"></ion-icon>
+                <ion-input label="Twitter URL" labelPlacement="floating" formControlName="twitter"></ion-input>
+            </ion-item>
+        </ion-list>
+
+    </form>
+</ion-content>

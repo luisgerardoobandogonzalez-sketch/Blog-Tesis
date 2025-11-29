@@ -6,11 +6,10 @@ import { Observable } from 'rxjs';
 import { CommentService } from 'src/app/shared/services/comment';
 import { AuthService } from 'src/app/core/services/auth';
 import { Models } from 'src/app/shared/models/models';
-import { ModalController } from '@ionic/angular'; // <-- Importa ModalController
-import { AuthModalComponent } from 'src/app/shared/components/auth-modal/auth-modal.component'; // <-- Importa el Modal
+import { ModalController } from '@ionic/angular';
+import { AuthModalComponent } from 'src/app/shared/components/auth-modal/auth-modal.component';
 import { take } from 'rxjs/operators';
 import { AlertController } from '@ionic/angular';
-
 
 @Component({
   selector: 'app-comment-section',
@@ -22,10 +21,16 @@ import { AlertController } from '@ionic/angular';
 export class CommentSectionComponent implements OnInit {
   @Input() blogId!: string;
   @Input() blogAuthorId!: string;
-  comments: Models.Comment.Comment[] = [];
+
+  allComments: Models.Comment.Comment[] = [];
+  rootComments: Models.Comment.Comment[] = [];
   newCommentText = '';
+
+  replyingTo: string | null = null;
+  replyText = '';
+
   isAuthenticated$: Observable<boolean>;
-   currentUser: Models.User.User | null = null;
+  currentUser: Models.User.User | null = null;
 
   constructor(
     private commentService: CommentService,
@@ -44,23 +49,67 @@ export class CommentSectionComponent implements OnInit {
 
   loadComments() {
     this.commentService.getComments(this.blogId).subscribe(data => {
-      this.comments = data;
+      this.allComments = data;
+      this.rootComments = data.filter(c => !c.parent_comment_id);
     });
   }
 
-    postComment() {
+  getReplies(commentId: string): Models.Comment.Comment[] {
+    return this.allComments.filter(c => c.parent_comment_id === commentId);
+  }
+
+  postComment() {
     if (!this.newCommentText.trim()) return;
     this.commentService.postComment(this.blogId, this.newCommentText).subscribe(() => {
       this.newCommentText = '';
     });
   }
 
-   handleCommentPost() {
+  postReply(parentId: string) {
+    if (!this.replyText.trim()) return;
+    this.commentService.postComment(this.blogId, this.replyText, parentId).subscribe(() => {
+      this.replyText = '';
+      this.replyingTo = null;
+    });
+  }
+
+  toggleReplyBox(commentId: string) {
+    if (this.replyingTo === commentId) {
+      this.replyingTo = null;
+    } else {
+      this.replyingTo = commentId;
+      this.replyText = '';
+    }
+  }
+
+  handleCommentPost() {
     this.authService.isAuthenticated$.pipe(take(1)).subscribe(isAuth => {
       if (isAuth) {
-        this.postComment(); // Si está logueado, publica el comentario
+        this.postComment();
       } else {
-        this.openAuthModal(); // Si no, abre el modal de login
+        this.openAuthModal();
+      }
+    });
+  }
+
+  handleReplyPost(parentId: string) {
+    this.authService.isAuthenticated$.pipe(take(1)).subscribe(isAuth => {
+      if (isAuth) {
+        this.postReply(parentId);
+      } else {
+        this.openAuthModal();
+      }
+    });
+  }
+
+  toggleLike(comment: Models.Comment.Comment) {
+    this.authService.isAuthenticated$.pipe(take(1)).subscribe(isAuth => {
+      if (isAuth) {
+        this.commentService.toggleLike(comment._id).subscribe(() => {
+          // Feedback visual inmediato si fuera necesario
+        });
+      } else {
+        this.openAuthModal();
       }
     });
   }
@@ -72,10 +121,8 @@ export class CommentSectionComponent implements OnInit {
     await modal.present();
   }
 
-
- canDelete(comment: Models.Comment.Comment): boolean {
+  canDelete(comment: Models.Comment.Comment): boolean {
     if (!this.currentUser) return false;
-    // Puede eliminar si es el autor del blog O si es el autor del comentario
     return this.currentUser.id === this.blogAuthorId || this.currentUser.id === comment.author_id;
   }
 
@@ -95,6 +142,4 @@ export class CommentSectionComponent implements OnInit {
     });
     await alert.present();
   }
-
-
 }

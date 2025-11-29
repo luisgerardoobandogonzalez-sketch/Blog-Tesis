@@ -16,6 +16,8 @@ import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 
+import { NotificationService } from 'src/app/shared/services/notification.service';
+
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
@@ -35,17 +37,20 @@ import { MatDividerModule } from '@angular/material/divider';
 export class MenuComponent {
   public isAuthenticated$: Observable<boolean>;
   public currentUser: Models.User.User | null = null;
+  public unreadNotifications$: Observable<number>;
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private modalCtrl: ModalController,
-    private menuCtrl: MenuController
+    private menuCtrl: MenuController,
+    private notificationService: NotificationService
   ) {
     this.isAuthenticated$ = this.authService.isAuthenticated$;
+    this.unreadNotifications$ = this.notificationService.getUnreadCount();
   }
 
-    ngOnInit() {
+  ngOnInit() {
     // Escucha los cambios de autenticación para actualizar el perfil
     this.isAuthenticated$.subscribe(isAuth => {
       if (isAuth) {
@@ -77,7 +82,7 @@ export class MenuComponent {
     }
   }
 
-    async openCreateBlogModal() {
+  async openCreateBlogModal() {
     // Primero, cerramos el menú para una mejor experiencia de usuario
     await this.menuCtrl.close();
 
@@ -98,12 +103,12 @@ export class MenuComponent {
     });
   }
 
-   async logout() {
+  async logout() {
     await this.menuCtrl.close();
     this.authService.logout();
   }
 
-   closeMenu() {
+  closeMenu() {
     this.menuCtrl.close();
   }
 }

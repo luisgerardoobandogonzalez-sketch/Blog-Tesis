@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { IonicModule, ModalController } from '@ionic/angular';
 import { FormsModule } from '@angular/forms'; // <-- Importante para [(ngModel)]
 import { AuthService } from 'src/app/core/services/auth';
@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
   templateUrl: './auth-modal.component.html',
   styleUrls: ['./auth-modal.component.scss'],
   standalone: true,
-  imports: [ IonicModule, CommonModule, FormsModule ], // <-- Añade FormsModule
+  imports: [IonicModule, FormsModule], // <-- Añade FormsModule
 })
 export class AuthModalComponent {
   view: 'login' | 'register' | 'verify' = 'login';

@@ -4,44 +4,44 @@
       <ion-back-button defaultHref="/home"></ion-back-button>
     </ion-buttons>
     <ion-title>Notificaciones</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="markAllRead()">
+        <ion-icon slot="icon-only" name="checkmark-done-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <div *ngIf="isLoading" class="ion-text-center ion-padding">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  @if (isLoading) {
+  <div class="ion-text-center ion-padding">
     <ion-spinner></ion-spinner>
   </div>
-
-  <div *ngIf="!isLoading">
-    <ion-list *ngIf="notifications.length > 0; else noNotifications">
-      <ion-item 
-        *ngFor="let notification of notifications" 
-        (click)="handleNotificationClick(notification)"
-        button 
-        detail="false"
-        [ngClass]="{ 'unread': !notification.is_read }">
-        
-        <ion-icon 
-          [name]="getIconForType(notification.type)" 
-          slot="start" 
-          [color]="notification.is_read ? 'medium' : 'primary'">
-        </ion-icon>
-        
-        <ion-label>
-          <p>{{ notification.message }}</p>
-          <small>{{ notification.created_at | date:'short' }}</small>
-        </ion-label>
-        
-        <!-- Círculo para notificaciones no leídas -->
-        <div *ngIf="!notification.is_read" class="unread-dot" slot="end"></div>
-      </ion-item>
-    </ion-list>
-
-    <ng-template #noNotifications>
-      <div class="ion-text-center ion-padding">
-        <p>No tienes notificaciones nuevas.</p>
+  } @else if (notifications.length > 0) {
+  <ion-list>
+    @for (notif of notifications; track notif._id) {
+    <ion-item button (click)="handleNotificationClick(notif)" [class.unread]="!notif.is_read" detail="false">
+      <div slot="start" class="notif-icon-container">
+        <ion-icon [name]="getIconForType(notif.type)" [color]="getColorForType(notif.type)"></ion-icon>
+        @if (!notif.is_read) {
+        <div class="unread-dot"></div>
+        }
       </div>
-    </ng-template>
+      <ion-label>
+        <p class="notif-message">{{ notif.message }}</p>
+        <p class="notif-date">{{ notif.created_at | date:'short':'es-GT' }}</p>
+      </ion-label>
+    </ion-item>
+    }
+  </ion-list>
+  } @else {
+  <div class="empty-state">
+    <ion-icon name="notifications-off-outline"></ion-icon>
+    <p>No tienes notificaciones nuevas</p>
   </div>
+  }
 </ion-content>
-

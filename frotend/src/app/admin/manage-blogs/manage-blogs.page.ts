@@ -5,17 +5,19 @@ import { RouterModule } from '@angular/router';
 import { BlogService } from 'src/app/shared/services/blog';
 import { Models } from 'src/app/shared/models/models';
 import { EditBlogModalComponent } from 'src/app/shared/components/edit-blog-modal/edit-blog-modal.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-manage-blogs',
   templateUrl: './manage-blogs.page.html',
   styleUrls: ['./manage-blogs.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, RouterModule]
+  imports: [IonicModule, CommonModule, RouterModule, FormsModule]
 })
 export class ManageBlogsPage implements OnInit {
   allBlogs: Models.Blog.Blog[] = [];
   isLoading = true;
+  segmentValue: 'all' | 'pending' = 'all';
 
   constructor(
     private blogService: BlogService,
@@ -35,9 +37,16 @@ export class ManageBlogsPage implements OnInit {
     });
   }
 
+  get filteredBlogs() {
+    if (this.segmentValue === 'pending') {
+      return this.allBlogs.filter(b => b.moderation.status === 'pending');
+    }
+    return this.allBlogs;
+  }
+
   async editBlog(blog: Models.Blog.Blog, event: Event) {
-    event.stopPropagation(); // Evita que se active la navegación del ítem
-    
+    event.stopPropagation();
+
     const modal = await this.modalCtrl.create({
       component: EditBlogModalComponent,
       componentProps: {
@@ -49,7 +58,6 @@ export class ManageBlogsPage implements OnInit {
     const { data, role } = await modal.onWillDismiss();
     if (role === 'confirm' && data) {
       this.blogService.updateBlog(blog._id, data).subscribe(updatedBlog => {
-        // Actualiza la lista sin recargar toda la página
         const index = this.allBlogs.findIndex(b => b._id === updatedBlog._id);
         if (index > -1) {
           this.allBlogs[index] = updatedBlog;
@@ -58,19 +66,28 @@ export class ManageBlogsPage implements OnInit {
     }
   }
 
-  approveBlog(blog:  Models.Blog.Blog) {
-    this.blogService.updateBlogModeration(blog._id, 'approved').subscribe();
-  }
-  
-  rejectBlog(blog:  Models.Blog.Blog) {
-    this.blogService.updateBlogModeration(blog._id, 'rejected').subscribe();
-  }
-
-  toggleFeatured(blog:  Models.Blog.Blog) {
-    this.blogService.toggleFeaturedStatus(blog._id).subscribe();
+  approveBlog(blog: Models.Blog.Blog) {
+    this.blogService.updateBlogModeration(blog._id, 'approved').subscribe(() => {
+      // Forzar actualización local si es necesario, aunque la referencia debería bastar
+      blog.moderation.status = 'approved';
+      blog.is_published = true;
+    });
   }
 
-  async deleteBlog(blog:  Models.Blog.Blog) {
+  rejectBlog(blog: Models.Blog.Blog) {
+    this.blogService.updateBlogModeration(blog._id, 'rejected').subscribe(() => {
+      blog.moderation.status = 'rejected';
+      blog.is_published = false;
+    });
+  }
+
+  toggleFeatured(blog: Models.Blog.Blog) {
+    this.blogService.toggleFeaturedStatus(blog._id).subscribe(() => {
+      blog.is_featured = !blog.is_featured;
+    });
+  }
+
+  async deleteBlog(blog: Models.Blog.Blog) {
     const alert = await this.alertCtrl.create({
       header: 'Confirmar Eliminación',
       message: `¿Estás seguro de eliminar el post "${blog.title}"? Esta acción no se puede deshacer.`,

@@ -6,6 +6,8 @@ import { ReportModel } from "./repor.model";
 import { RatingModels } from "./rating.models";
 import { FavoritesModels } from "./favorites.model";
 import { GamificationModels } from "./gamification.model";
+import { ChatModels } from "./chat.model";
+
 export namespace Models {
   export import Blog = BlogModels;
   export import User = UserModels;
@@ -15,4 +17,5 @@ export namespace Models {
   export import Rating = RatingModels;
   export import Favorites = FavoritesModels;
   export import Gamification = GamificationModels;
+  export import Chat = ChatModels;
 }

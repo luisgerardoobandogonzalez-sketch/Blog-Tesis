@@ -6,48 +6,53 @@
 
 <ion-content class="ion-padding">
   <ion-searchbar placeholder="Buscar usuario por nombre o correo"></ion-searchbar>
-  
-  <div *ngIf="isLoading" class="ion-text-center">
-    <ion-spinner name="crescent" class="ion-margin-top"></ion-spinner>
-  </div>
 
-  <ion-list *ngIf="!isLoading">
-    <ion-list-header>
-      <ion-label>Usuario</ion-label>
-      <ion-label>Estado</ion-label>
-      <ion-label>Acciones</ion-label>
-    </ion-list-header>
+  @if (isLoading) {
+    <div class="ion-text-center">
+      <ion-spinner name="crescent" class="ion-margin-top"></ion-spinner>
+    </div>
+  }
 
-    <ion-item *ngFor="let user of users" lines="full">
-      <ion-avatar slot="start">
-        <img [src]="user.profile_picture_url" />
-      </ion-avatar>
-      <ion-label>
-        <h2>{{ user.firstName }} {{ user.lastName }}</h2>
-        <p>{{ user.email }} - Miembro desde: {{ user.created_at | date }}</p>
-      </ion-label>
-
-      <ion-chip [color]="user.status === 'active' ? 'success' : 'warning'" slot="end">
-        <ion-label>{{ user.status === 'active' ? 'Activo' : 'Suspendido' }}</ion-label>
-      </ion-chip>
-
-     <ion-buttons slot="end">
-  <ion-button (click)="viewUser(user)" fill="clear" title="Ver Perfil">
-    <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
-  </ion-button>
-  <ion-button (click)="editUser(user)" fill="clear" title="Editar">
-    <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
-  </ion-button>
-  
-  <ion-button *ngIf="user.status === 'active'" (click)="suspendUser(user)" fill="clear" color="warning" title="Suspender">
-    <ion-icon name="ban-outline" slot="icon-only"></ion-icon>
-  </ion-button>
-
-  <ion-button *ngIf="user.status === 'suspended'" (click)="activateUser(user)" fill="clear" color="success" title="Activar">
-    <ion-icon name="checkmark-circle-outline" slot="icon-only"></ion-icon>
-  </ion-button>
-  </ion-buttons>
-    </ion-item>
-  </ion-list>
+  @if (!isLoading) {
+    <ion-list>
+      <ion-list-header>
+        <ion-label>Usuario</ion-label>
+        <ion-label>Estado</ion-label>
+        <ion-label>Acciones</ion-label>
+      </ion-list-header>
+      @for (user of users; track user) {
+        <ion-item lines="full">
+          <ion-avatar slot="start">
+            <img [src]="user.profile_picture_url" />
+          </ion-avatar>
+          <ion-label>
+            <h2>{{ user.firstName }} {{ user.lastName }}</h2>
+            <p>{{ user.email }} - Miembro desde: {{ user.created_at | date }}</p>
+          </ion-label>
+          <ion-chip [color]="user.status === 'active' ? 'success' : 'warning'" slot="end">
+            <ion-label>{{ user.status === 'active' ? 'Activo' : 'Suspendido' }}</ion-label>
+          </ion-chip>
+          <ion-buttons slot="end">
+            <ion-button (click)="viewUser(user)" fill="clear" title="Ver Perfil">
+              <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+            <ion-button (click)="editUser(user)" fill="clear" title="Editar">
+              <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+            @if (user.status === 'active') {
+              <ion-button (click)="suspendUser(user)" fill="clear" color="warning" title="Suspender">
+                <ion-icon name="ban-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+            }
+            @if (user.status === 'suspended') {
+              <ion-button (click)="activateUser(user)" fill="clear" color="success" title="Activar">
+                <ion-icon name="checkmark-circle-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+            }
+          </ion-buttons>
+        </ion-item>
+      }
+    </ion-list>
+  }
 
 </ion-content>

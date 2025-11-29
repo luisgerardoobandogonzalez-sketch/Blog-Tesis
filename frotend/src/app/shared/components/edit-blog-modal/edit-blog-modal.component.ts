@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { Models } from 'src/app/shared/models/models';
@@ -9,7 +9,7 @@ import { Models } from 'src/app/shared/models/models';
   templateUrl: './edit-blog-modal.component.html',
   styleUrls: ['./edit-blog-modal.component.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule]
+  imports: [IonicModule, FormsModule]
 })
 export class EditBlogModalComponent implements OnInit {
   // Recibe los datos del blog a editar desde la página de detalle

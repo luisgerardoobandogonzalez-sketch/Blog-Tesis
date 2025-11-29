@@ -1,0 +1,42 @@
+.tag-selector-container {
+    padding: 0 10px;
+
+    .search-item {
+        --background: var(--ion-color-light);
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+
+    .suggestions-list {
+        position: absolute;
+        width: 90%;
+        z-index: 1000;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .selected-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-bottom: 15px;
+    }
+
+    .popular-tags {
+        margin-top: 10px;
+
+        .section-title {
+            font-size: 0.8em;
+            color: var(--ion-color-medium);
+            margin-bottom: 5px;
+        }
+
+        .tags-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+    }
+}

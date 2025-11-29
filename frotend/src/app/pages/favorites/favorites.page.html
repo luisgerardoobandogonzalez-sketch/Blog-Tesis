@@ -17,93 +17,106 @@
       <ion-segment-button value="all">
         <ion-label>Todos ({{stats.total_favorites}})</ion-label>
       </ion-segment-button>
-      <ion-segment-button *ngFor="let folder of folders" [value]="folder._id">
-        <ion-icon [name]="folder.icon"></ion-icon>
-        <ion-label>{{folder.name}}</ion-label>
-      </ion-segment-button>
+      @for (folder of folders; track folder) {
+        <ion-segment-button [value]="folder._id">
+          <ion-icon [name]="folder.icon"></ion-icon>
+          <ion-label>{{folder.name}}</ion-label>
+        </ion-segment-button>
+      }
     </ion-segment>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <!-- Loading -->
-  <div *ngIf="isLoading" class="loading-container">
-    <ion-spinner name="crescent"></ion-spinner>
-    <p>Cargando guardados...</p>
-  </div>
+  @if (isLoading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Cargando guardados...</p>
+    </div>
+  }
 
   <!-- Estado vacío -->
-  <div *ngIf="!isLoading && favoriteBlogs.length === 0" class="empty-state">
-    <ion-icon name="bookmark-outline" class="empty-icon"></ion-icon>
-    <h2>No tienes blogs guardados</h2>
-    <p>Guarda tus blogs favoritos para acceder fácilmente a ellos más tarde</p>
-    <ion-button routerLink="/home" fill="outline">
-      Explorar Blogs
-    </ion-button>
-  </div>
+  @if (!isLoading && favoriteBlogs.length === 0) {
+    <div class="empty-state">
+      <ion-icon name="bookmark-outline" class="empty-icon"></ion-icon>
+      <h2>No tienes blogs guardados</h2>
+      <p>Guarda tus blogs favoritos para acceder fácilmente a ellos más tarde</p>
+      <ion-button routerLink="/home" fill="outline">
+        Explorar Blogs
+      </ion-button>
+    </div>
+  }
 
   <!-- Lista de favoritos -->
-  <ion-list *ngIf="!isLoading && favoriteBlogs.length > 0">
-    <ion-item-sliding *ngFor="let blog of favoriteBlogs">
-      <!-- Contenido del blog -->
-      <ion-item button (click)="viewBlog(blog._id)">
-        <ion-thumbnail slot="start" *ngIf="blog.featured_image">
-          <img [src]="blog.featured_image" [alt]="blog.title">
-        </ion-thumbnail>
-        
-        <ion-label>
-          <h2>{{ blog.title }}</h2>
-          <p>{{ blog.excerpt }}</p>
-          <div class="blog-meta">
-            <ion-chip>
-              <ion-icon name="calendar-outline"></ion-icon>
-              <ion-label>{{ blog.created_at | date: 'dd/MM/yyyy' }}</ion-label>
-            </ion-chip>
-            <ion-chip *ngIf="blog.category">
-              <ion-label>{{ blog.category }}</ion-label>
-            </ion-chip>
-          </div>
-        </ion-label>
-
-        <ion-button fill="clear" slot="end" (click)="removeFavorite(blog._id, $event)">
-          <ion-icon name="bookmark" color="primary"></ion-icon>
-        </ion-button>
-      </ion-item>
-
-      <!-- Opciones deslizables -->
-      <ion-item-options side="end">
-        <ion-item-option color="danger" (click)="removeFavorite(blog._id, $event)">
-          <ion-icon name="trash-outline"></ion-icon>
-          Quitar
-        </ion-item-option>
-      </ion-item-options>
-    </ion-item-sliding>
-  </ion-list>
+  @if (!isLoading && favoriteBlogs.length > 0) {
+    <ion-list>
+      @for (blog of favoriteBlogs; track blog) {
+        <ion-item-sliding>
+          <!-- Contenido del blog -->
+          <ion-item button (click)="viewBlog(blog._id)">
+            @if (blog.featured_image) {
+              <ion-thumbnail slot="start">
+                <img [src]="blog.featured_image" [alt]="blog.title">
+              </ion-thumbnail>
+            }
+            <ion-label>
+              <h2>{{ blog.title }}</h2>
+              <p>{{ blog.excerpt }}</p>
+              <div class="blog-meta">
+                <ion-chip>
+                  <ion-icon name="calendar-outline"></ion-icon>
+                  <ion-label>{{ blog.created_at | date: 'dd/MM/yyyy' }}</ion-label>
+                </ion-chip>
+                @if (blog.category) {
+                  <ion-chip>
+                    <ion-label>{{ blog.category }}</ion-label>
+                  </ion-chip>
+                }
+              </div>
+            </ion-label>
+            <ion-button fill="clear" slot="end" (click)="removeFavorite(blog._id, $event)">
+              <ion-icon name="bookmark" color="primary"></ion-icon>
+            </ion-button>
+          </ion-item>
+          <!-- Opciones deslizables -->
+          <ion-item-options side="end">
+            <ion-item-option color="danger" (click)="removeFavorite(blog._id, $event)">
+              <ion-icon name="trash-outline"></ion-icon>
+              Quitar
+            </ion-item-option>
+          </ion-item-options>
+        </ion-item-sliding>
+      }
+    </ion-list>
+  }
 
   <!-- Estadísticas -->
-  <div class="stats-footer" *ngIf="!isLoading">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-subtitle>Estadísticas</ion-card-subtitle>
-      </ion-card-header>
-      <ion-card-content>
-        <div class="stats-grid">
-          <div class="stat-item">
-            <ion-icon name="bookmark"></ion-icon>
-            <div>
-              <strong>{{stats.total_favorites}}</strong>
-              <span>Guardados</span>
+  @if (!isLoading) {
+    <div class="stats-footer">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-subtitle>Estadísticas</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <ion-icon name="bookmark"></ion-icon>
+              <div>
+                <strong>{{stats.total_favorites}}</strong>
+                <span>Guardados</span>
+              </div>
+            </div>
+            <div class="stat-item">
+              <ion-icon name="folder"></ion-icon>
+              <div>
+                <strong>{{stats.folders_count}}</strong>
+                <span>Carpetas</span>
+              </div>
             </div>
           </div>
-          <div class="stat-item">
-            <ion-icon name="folder"></ion-icon>
-            <div>
-              <strong>{{stats.folders_count}}</strong>
-              <span>Carpetas</span>
-            </div>
-          </div>
-        </div>
-      </ion-card-content>
-    </ion-card>
-  </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  }
 </ion-content>

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { IonicModule, MenuController } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
 import { AuthService } from 'src/app/core/services/auth';
@@ -9,7 +9,7 @@ import { AuthService } from 'src/app/core/services/auth';
   templateUrl: './admin-menu.component.html',
   styleUrls: ['./admin-menu.component.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, RouterModule]
+  imports: [IonicModule, RouterModule]
 })
 export class AdminMenuComponent {
   constructor(

@@ -1,0 +1,88 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Explorar Etiquetas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- Popular Tags Section -->
+  <div class="tags-section">
+    <h3>Tendencias</h3>
+    <div class="tags-cloud">
+      @for (tag of popularTags; track tag.id) {
+      <ion-chip [color]="selectedTag === tag.name ? 'primary' : 'medium'" [outline]="selectedTag !== tag.name"
+        (click)="selectTag(tag.name)">
+        <ion-label>#{{ tag.name }}</ion-label>
+        <ion-badge [color]="selectedTag === tag.name ? 'light' : 'primary'" class="count-badge">{{ tag.count
+          }}</ion-badge>
+      </ion-chip>
+      }
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- All Tags Section (Expandable could be better, but simple list for now) -->
+  <div class="tags-section">
+    <h3>Todas las etiquetas</h3>
+    <div class="tags-cloud small">
+      @for (tag of allTags; track tag.id) {
+      <ion-chip size="small" [color]="selectedTag === tag.name ? 'primary' : 'light'" (click)="selectTag(tag.name)">
+        <ion-label>{{ tag.name }}</ion-label>
+      </ion-chip>
+      }
+    </div>
+  </div>
+
+  <!-- Selected Tag Results -->
+  @if (selectedTag) {
+  <div class="results-section ion-margin-top">
+    <div class="results-header">
+      <h2>Resultados para <span class="highlight">#{{ selectedTag }}</span></h2>
+      <ion-button fill="clear" size="small" (click)="clearSelection()">
+        <ion-icon name="close-circle" slot="start"></ion-icon>
+        Limpiar filtro
+      </ion-button>
+    </div>
+
+    @if (isLoading) {
+    <div class="ion-text-center">
+      <ion-spinner></ion-spinner>
+    </div>
+    } @else if (blogs.length > 0) {
+    <ion-list>
+      @for (blog of blogs; track blog._id) {
+      <ion-card button [routerLink]="['/blog', blog._id]">
+        <ion-card-header>
+          <ion-card-subtitle>{{ blog.category }} • {{ blog.reading_time }} min lectura</ion-card-subtitle>
+          <ion-card-title>{{ blog.title }}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p>{{ blog.excerpt }}</p>
+          <div class="card-footer">
+            <span><ion-icon name="heart"></ion-icon> {{ blog.likes_count }}</span>
+            <span><ion-icon name="chatbubble"></ion-icon> {{ blog.comments_count }}</span>
+          </div>
+        </ion-card-content>
+      </ion-card>
+      }
+    </ion-list>
+    } @else {
+    <div class="empty-state">
+      <ion-icon name="search-outline"></ion-icon>
+      <p>No se encontraron blogs con esta etiqueta.</p>
+    </div>
+    }
+  </div>
+  } @else {
+  <div class="empty-state-initial">
+    <ion-icon name="pricetags-outline"></ion-icon>
+    <p>Selecciona una etiqueta para ver los blogs relacionados</p>
+  </div>
+  }
+
+</ion-content>

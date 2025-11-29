@@ -1,0 +1,47 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="/chat"></ion-back-button>
+        </ion-buttons>
+        <ion-title>
+            @if (otherUser) {
+            {{ otherUser.firstName }} {{ otherUser.lastName }}
+            } @else {
+            Chat
+            }
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content class="chat-content" #content>
+    @if (isLoading) {
+    <div class="ion-text-center ion-padding">
+        <ion-spinner></ion-spinner>
+    </div>
+    }
+
+    <div class="messages-container">
+        @for (message of messages; track message.id) {
+        <div class="message-wrapper" [class.sent]="isSentByCurrentUser(message)"
+            [class.received]="!isSentByCurrentUser(message)">
+            <div class="message-bubble">
+                <p>{{ message.content }}</p>
+                <span class="timestamp">{{ message.timestamp | date:'shortTime' }}</span>
+            </div>
+        </div>
+        }
+    </div>
+</ion-content>
+
+<ion-footer>
+    <ion-toolbar>
+        <ion-item lines="none" class="input-container">
+            <ion-textarea [(ngModel)]="newMessage" placeholder="Escribe un mensaje..." [autoGrow]="true" rows="1"
+                (keydown.enter)="$event.preventDefault(); sendMessage()">
+            </ion-textarea>
+            <ion-button slot="end" fill="clear" (click)="sendMessage()" [disabled]="!newMessage.trim()">
+                <ion-icon name="send" slot="icon-only"></ion-icon>
+            </ion-button>
+        </ion-item>
+    </ion-toolbar>
+</ion-footer>

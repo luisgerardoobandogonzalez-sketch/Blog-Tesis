@@ -10,21 +10,21 @@ export const routes: Routes = [
   {
     path: 'profile',
     loadComponent: () => import('./pages/profile/profile.page').then((m) => m.ProfilePage),
-    canActivate: [AuthGuard] // Protegemos la ruta de perfil
+    canActivate: [AuthGuard]
   },
   {
     path: 'settings',
     loadComponent: () => import('./pages/settings/settings.page').then(m => m.SettingsPage),
-    canActivate: [AuthGuard] // Protegemos la ruta de configuración
+    canActivate: [AuthGuard]
   },
   {
-    path: 'blog/:id', // ':id' es un parámetro que contendrá el ID del blog
+    path: 'blog/:id',
     loadComponent: () => import('./shared/components/blog-item/blog-item.component').then(m => m.BlogItemComponent)
   },
   {
     path: 'admin',
     canActivate: [AuthGuard, AdminGuard],
-    children: [ // Los hijos ahora cuelgan directamente de /admin
+    children: [
       { path: '', redirectTo: 'analytics', pathMatch: 'full' },
       { path: 'analytics', loadComponent: () => import('./admin/analytics/analytics.page').then(p => p.AnalyticsPage) },
       { path: 'users', loadComponent: () => import('./admin/users/users.page').then(p => p.UsersPage) },
@@ -33,27 +33,40 @@ export const routes: Routes = [
     ]
   },
   {
-    path: 'user/:id', // Perfil de un usuario específico por ID
+    path: 'user/:id',
     loadComponent: () => import('./pages/user-profile/user-profile.page').then(m => m.UserProfilePage)
   },
   {
     path: 'notifications',
     loadComponent: () => import('./pages/notifications/notifications.page').then(m => m.NotificationsPage),
-    canActivate: [AuthGuard] // <-- Protegida, solo para usuarios logueados
+    canActivate: [AuthGuard]
   },
   {
     path: 'favorites',
     loadComponent: () => import('./pages/favorites/favorites.page').then(m => m.FavoritesPage),
-    canActivate: [AuthGuard] // <-- Protegida, solo para usuarios logueados
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'chat',
+    loadComponent: () => import('./pages/chat/chat-list/chat-list.page').then(m => m.ChatListPage),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'chat/:id',
+    loadComponent: () => import('./pages/chat/chat-room/chat-room.page').then(m => m.ChatRoomPage),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'leaderboard',
+    loadComponent: () => import('./pages/leaderboard/leaderboard.page').then(m => m.LeaderboardPage)
+  },
+  {
+    path: 'tags',
+    loadComponent: () => import('./pages/tags/tags.page').then(m => m.TagsPage)
   },
   {
     path: '',
     redirectTo: 'home',
     pathMatch: 'full',
-  },
-  {
-    path: 'user-profile',
-    loadComponent: () => import('./pages/user-profile/user-profile.page').then(m => m.UserProfilePage)
-  },
-
+  }
 ];

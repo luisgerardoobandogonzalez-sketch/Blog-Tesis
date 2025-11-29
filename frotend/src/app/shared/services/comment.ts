@@ -3,6 +3,8 @@ import { Observable, of, Subject } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { Models } from '../models/models';
 import { AuthService } from 'src/app/core/services/auth';
+import { NotificationService } from './notification.service';
+import { GamificationService } from './gamification';
 
 @Injectable({ providedIn: 'root' })
 export class CommentService {
@@ -50,7 +52,11 @@ export class CommentService {
     },
   ];
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private notificationService: NotificationService,
+    private gamificationService: GamificationService
+  ) { }
 
   getComments(blogId: string): Observable<Models.Comment.Comment[]> {
     const comments = this.fakeComments.filter(c => c.blog_id === blogId);
@@ -60,33 +66,67 @@ export class CommentService {
   postComment(blogId: string, content: string, parentId?: string): Observable<Models.Comment.Comment> {
     const currentUser = this.authService.getUserProfile();
     const newComment: Models.Comment.Comment = {
-       _id: `c${Date.now()}`,
-    blog_id: blogId,
-    author_id: currentUser!.id,
-    content,
-    parent_comment_id: parentId,
-    likes_count: 0,
-    replies_count: 0,
-    is_edited: false, // <-- Propiedad añadida
-    moderation: { status: 'approved' }, // <-- Propiedad añadida
-    created_at: new Date().toISOString(), // <-- Propiedad añadida
-    updated_at: new Date().toISOString()  // <-- Propiedad añadida
+      _id: `c${Date.now()}`,
+      blog_id: blogId,
+      author_id: currentUser!.id,
+      content,
+      parent_comment_id: parentId,
+      likes_count: 0,
+      replies_count: 0,
+      is_edited: false, // <-- Propiedad añadida
+      moderation: { status: 'approved' }, // <-- Propiedad añadida
+      created_at: new Date().toISOString(), // <-- Propiedad añadida
+      updated_at: new Date().toISOString()  // <-- Propiedad añadida
     };
     this.fakeComments.push(newComment);
     this.commentAddedSource.next();
+
+    // GAMIFICATION: XP for commenting
+    this.gamificationService.addXP(currentUser!.id, 'receive_comment').subscribe(); // Using receive_comment as proxy for now or add new type
+
+    // NOTIFICATION: Notify blog author (mock logic, assuming we know author)
+    // In real app, we'd fetch blog to get author_id
+
     return of(newComment);
   }
 
-deleteComment(commentId: string): Observable<boolean> {
-  const initialLength = this.fakeComments.length;
-  this.fakeComments = this.fakeComments.filter(c => c._id !== commentId);
-  
-  // Si la longitud cambió, la eliminación fue exitosa
-  if (this.fakeComments.length < initialLength) {
-    this.commentAddedSource.next(); // Reutilizamos el subject para notificar un cambio
-    return of(true);
+  deleteComment(commentId: string): Observable<boolean> {
+    const initialLength = this.fakeComments.length;
+    this.fakeComments = this.fakeComments.filter(c => c._id !== commentId);
+
+    // Si la longitud cambió, la eliminación fue exitosa
+    if (this.fakeComments.length < initialLength) {
+      this.commentAddedSource.next(); // Reutilizamos el subject para notificar un cambio
+      return of(true);
+    }
+    return of(false);
   }
-  return of(false);
-}
+
+  toggleLike(commentId: string): Observable<boolean> {
+    const comment = this.fakeComments.find(c => c._id === commentId);
+    if (comment) {
+      if (comment.currentUserHasLiked) {
+        comment.likes_count--;
+        comment.currentUserHasLiked = false;
+      } else {
+        comment.likes_count++;
+        comment.currentUserHasLiked = true;
+
+        // NOTIFICATION
+        const currentUser = this.authService.getUserProfile();
+        if (currentUser && currentUser.id !== comment.author_id) {
+          this.notificationService.createNotification(
+            comment.author_id,
+            currentUser.id,
+            'like',
+            `A ${currentUser.firstName} le gustó tu comentario`,
+            `/blog/${comment.blog_id}`
+          );
+        }
+      }
+      return of(true);
+    }
+    return of(false);
+  }
 
 }

@@ -5,8 +5,8 @@ import { ActivatedRoute } from '@angular/router';
 import { BlogService } from 'src/app/shared/services/blog';
 import { Models } from 'src/app/shared/models/models';
 import { CommentSectionComponent } from '../comment-section/comment-section.component';
-import { AuthService } from 'src/app/core/services/auth'; // <-- Importa AuthService
-import { AuthModalComponent } from 'src/app/shared/components/auth-modal/auth-modal.component'; // <-- Importa el Modal
+import { AuthService } from 'src/app/core/services/auth';
+import { AuthModalComponent } from 'src/app/shared/components/auth-modal/auth-modal.component';
 import { take } from 'rxjs/operators';
 import { ModalController } from '@ionic/angular';
 import { EditBlogModalComponent } from 'src/app/shared/components/edit-blog-modal/edit-blog-modal.component';
@@ -29,27 +29,23 @@ export class BlogItemComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private blogService: BlogService,
-    private AuthService: AuthService,     // <-- Inyéctalo
+    private AuthService: AuthService,
     private modalCtrl: ModalController,
     private sanitizer: DomSanitizer
   ) { }
 
   ngOnInit() {
-    // 1. Leemos el 'id' de la URL
     const blogId = this.route.snapshot.paramMap.get('id');
     this.currentUser = this.AuthService.getUserProfile();
 
     if (blogId) {
-      // 2. Usamos el id para pedir los datos del blog al servicio
       this.blogService.getBlogById(blogId).subscribe(data => {
-        this.blog = data; // 3. Guardamos los datos del blog
+        this.blog = data;
         this.isLoading = false;
 
-        // Sanitizar el contenido HTML después de cargar el blog
         if (this.blog) {
           this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(this.blog.content);
         }
-
       });
     }
   }
@@ -59,20 +55,17 @@ export class BlogItemComponent implements OnInit {
 
     this.AuthService.isAuthenticated$.pipe(take(1)).subscribe(isAuth => {
       if (isAuth) {
-        // Si está autenticado, ejecuta la lógica de siempre
         if (this.blog!.currentUserHasLiked) {
           this.blogService.unlikeBlog(this.blog!._id).subscribe();
         } else {
           this.blogService.likeBlog(this.blog!._id).subscribe();
         }
       } else {
-        // Si no, abre el modal de login
         this.openAuthModal();
       }
     });
   }
 
-  // --- NUEVA FUNCIÓN DE AYUDA ---
   async openAuthModal() {
     const modal = await this.modalCtrl.create({
       component: AuthModalComponent,
@@ -80,14 +73,13 @@ export class BlogItemComponent implements OnInit {
     await modal.present();
   }
 
-
   async openEditModal() {
     if (!this.blog) return;
 
     const modal = await this.modalCtrl.create({
       component: EditBlogModalComponent,
       componentProps: {
-        blogToEdit: this.blog // Pasamos los datos del blog al modal
+        blogToEdit: this.blog
       }
     });
     await modal.present();
@@ -95,11 +87,54 @@ export class BlogItemComponent implements OnInit {
     const { data, role } = await modal.onWillDismiss();
 
     if (role === 'confirm') {
-      // Si se guardan los cambios, llama al servicio
       this.blogService.updateBlog(this.blog._id, data).subscribe(updatedBlog => {
-        this.blog = updatedBlog; // Actualiza la vista con el blog editado
+        this.blog = updatedBlog;
       });
     }
   }
 
+  async exportToPDF() {
+    if (!this.blog) return;
+
+    try {
+      const jsPDF = (await import('jspdf')).default;
+      const html2canvas = (await import('html2canvas')).default;
+
+      const content = document.getElementById('blog-content');
+      if (!content) return;
+
+      const canvas = await html2canvas(content, {
+        scale: 2,
+        useCORS: true,
+        logging: false
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const imgWidth = 210;
+      const pageHeight = 297;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      pdf.save(`${this.blog.title.replace(/\s+/g, '_')}.pdf`);
+    } catch (error) {
+      console.error('Error generando PDF:', error);
+    }
+  }
 }

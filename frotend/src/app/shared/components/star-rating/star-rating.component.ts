@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnChanges} from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { IonicModule } from '@ionic/angular';
 
 @Component({
@@ -7,7 +7,7 @@ import { IonicModule } from '@ionic/angular';
   templateUrl: './star-rating.component.html',
   styleUrls: ['./star-rating.component.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule]
+  imports: [IonicModule]
 })
 export class StarRatingComponent implements OnChanges {
   @Input() rating: number = 0;

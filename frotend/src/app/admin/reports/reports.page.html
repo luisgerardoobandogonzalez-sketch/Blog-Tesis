@@ -5,36 +5,44 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <div *ngIf="isLoading" class="ion-text-center">
-    <ion-spinner></ion-spinner>
-  </div>
+  @if (isLoading) {
+    <div class="ion-text-center">
+      <ion-spinner></ion-spinner>
+    </div>
+  }
 
-  <ion-list *ngIf="!isLoading">
-    <ion-item *ngFor="let report of reports" lines="full">
-      <ion-icon name="alert-circle-outline" slot="start" [color]="report.status === 'pending' ? 'danger' : 'medium'"></ion-icon>
-      <ion-label>
-        <h2>{{ report.reason | titlecase }} en {{ report.content_type | titlecase }}</h2>
-        <p>Reportado por: {{ report.reporter_id }} | Reportado a: {{ report.reported_user_id }}</p>
-        <p><em>"{{ report.description }}"</em></p>
-      </ion-label>
-      
-      <div class="ion-text-right">
-        <ion-chip [color]="report.status === 'pending' ? 'danger' : (report.status === 'reviewed' ? 'warning' : 'success')">
-          <ion-label>{{ report.status | titlecase }}</ion-label>
-        </ion-chip>
-        
-        <ion-buttons>
-          <ion-button (click)="viewContent(report)" fill="clear" title="Ver Contenido">
-            <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
-          </ion-button>
-          <ion-button *ngIf="report.status === 'pending'" (click)="updateStatus(report, 'reviewed')" fill="clear" title="Marcar como Revisado">
-            <ion-icon name="checkmark-circle-outline" slot="icon-only"></ion-icon>
-          </ion-button>
-          <ion-button *ngIf="report.status !== 'resolved'" (click)="updateStatus(report, 'resolved')" fill="clear" title="Marcar como Resuelto">
-            <ion-icon name="shield-checkmark-outline" slot="icon-only"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </div>
-    </ion-item>
-  </ion-list>
+  @if (!isLoading) {
+    <ion-list>
+      @for (report of reports; track report) {
+        <ion-item lines="full">
+          <ion-icon name="alert-circle-outline" slot="start" [color]="report.status === 'pending' ? 'danger' : 'medium'"></ion-icon>
+          <ion-label>
+            <h2>{{ report.reason | titlecase }} en {{ report.content_type | titlecase }}</h2>
+            <p>Reportado por: {{ report.reporter_id }} | Reportado a: {{ report.reported_user_id }}</p>
+            <p><em>"{{ report.description }}"</em></p>
+          </ion-label>
+          <div class="ion-text-right">
+            <ion-chip [color]="report.status === 'pending' ? 'danger' : (report.status === 'reviewed' ? 'warning' : 'success')">
+              <ion-label>{{ report.status | titlecase }}</ion-label>
+            </ion-chip>
+            <ion-buttons>
+              <ion-button (click)="viewContent(report)" fill="clear" title="Ver Contenido">
+                <ion-icon name="eye-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+              @if (report.status === 'pending') {
+                <ion-button (click)="updateStatus(report, 'reviewed')" fill="clear" title="Marcar como Revisado">
+                  <ion-icon name="checkmark-circle-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+              }
+              @if (report.status !== 'resolved') {
+                <ion-button (click)="updateStatus(report, 'resolved')" fill="clear" title="Marcar como Resuelto">
+                  <ion-icon name="shield-checkmark-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+              }
+            </ion-buttons>
+          </div>
+        </ion-item>
+      }
+    </ion-list>
+  }
 </ion-content>

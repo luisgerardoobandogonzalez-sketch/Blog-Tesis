@@ -26,21 +26,50 @@
 
     <ion-item>
       <ion-select label="Carrera Asociada" placeholder="Selecciona una" [(ngModel)]="blogData.career">
-        <ion-select-option value="Ingenieria de Sistemas">Ingeniería de Sistemas</ion-select-option>
-        <ion-select-option value="Derecho">Derecho</ion-select-option>
-        <ion-select-option value="Medicina">Medicina</ion-select-option>
-      </ion-select>
-    </ion-item>
+        <ion-header>
+          <ion-toolbar>
+            <ion-title>Crear Nuevo Blog</ion-title>
+            <ion-buttons slot="end">
+              <ion-button (click)="cancel()">Cancelar</ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
 
-    <ion-item>
-      <ion-input label="Etiquetas" labelPlacement="floating"
-        placeholder="Ej: angular, ionic, desarrollo (separadas por coma)" [(ngModel)]="blogData.tagsInput">
-      </ion-input>
-    </ion-item>
-  </ion-list>
+        <ion-content class="ion-padding">
+          <ion-list>
+            <ion-item>
+              <ion-input label="Título" labelPlacement="floating" placeholder="Un título increíble"
+                [(ngModel)]="blogData.title" required>
+              </ion-input>
+            </ion-item>
 
-  <ion-button expand="block" (click)="publish()" [disabled]="!blogData.title || !blogData.content"
-    class="ion-margin-top">
-    Publicar
-  </ion-button>
-</ion-content>
+            <ion-item lines="none" class="quill-container">
+              <div class="editor-wrapper">
+                <ion-label position="stacked">Contenido</ion-label>
+                <quill-editor [(ngModel)]="blogData.content" [modules]="quillModules"
+                  placeholder="Escribe tu historia aquí..." [styles]="{height: '300px'}" format="html">
+                </quill-editor>
+              </div>
+            </ion-item>
+
+            <ion-item>
+              <ion-select label="Carrera Asociada" placeholder="Selecciona una" [(ngModel)]="blogData.career">
+                <ion-select-option value="Ingenieria de Sistemas">Ingeniería de Sistemas</ion-select-option>
+                <ion-select-option value="Derecho">Derecho</ion-select-option>
+                <ion-select-option value="Medicina">Medicina</ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-item class="tags-item">
+              <ion-label position="stacked">Etiquetas</ion-label>
+              <app-tag-selector [initialTags]="blogData.tags" (tagsChange)="onTagsChange($event)">
+              </app-tag-selector>
+            </ion-item>
+
+          </ion-list>
+
+          <ion-button expand="block" (click)="publish()" [disabled]="!blogData.title || !blogData.content"
+            class="ion-margin-top">
+            Publicar
+          </ion-button>
+        </ion-content>

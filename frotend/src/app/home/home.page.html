@@ -1,89 +1,101 @@
 <ion-content>
 
-  <div *ngIf="isLoading">
-    <ion-list>
-      <ion-card *ngFor="let i of [1, 2, 3]">
-        <ion-card-header>
-          <ion-skeleton-text [animated]="true" style="width: 80%"></ion-skeleton-text>
-        </ion-card-header>
-        <ion-card-content>
-          <ion-skeleton-text [animated]="true" style="width: 100%"></ion-skeleton-text>
-          <ion-skeleton-text [animated]="true" style="width: 60%"></ion-skeleton-text>
-        </ion-card-content>
-      </ion-card>
-    </ion-list>
-  </div>
-
-  <div *ngIf="!isLoading">
-    <ion-card class="create-post-card" (click)="openCreateBlogModal()" button>
-      <ion-item lines="none">
-        <ion-avatar slot="start">
-          <img src="assets/icon/favicon.png" />
-        </ion-avatar>
-        <ion-label>¿En qué estás pensando?</ion-label>
-      </ion-item>
-    </ion-card>
-
-
-    <ion-grid>
-      <ion-row>
-        <ion-col size="6">
-          <ion-item>
-            <ion-select label="Carrera" interface="popover" [(ngModel)]="selectedFilters.career"
-              (ionChange)="onFilterChange()">
-              <ion-select-option value="all">Todas</ion-select-option>
-              <ion-select-option *ngFor="let career of availableCareers" [value]="career">{{ career
-                }}</ion-select-option>
-            </ion-select>
-          </ion-item>
-        </ion-col>
-        <ion-col size="6">
-          <ion-item>
-            <ion-select label="Categoría" interface="popover" [(ngModel)]="selectedFilters.category"
-              (ionChange)="onFilterChange()">
-              <ion-select-option value="all">Todas</ion-select-option>
-              <ion-select-option *ngFor="let category of availableCategories" [value]="category">{{ category
-                }}</ion-select-option>
-            </ion-select>
-          </ion-item>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-
-    <div *ngIf="allBlogs.length === 0" class="ion-text-center ion-padding">
-      <h3>¡Bienvenido!</h3>
-      <p>Aún no hay blogs publicados. ¡Sé el primero en escribir uno!</p>
+  @if (isLoading) {
+    <div>
+      <ion-list>
+        @for (i of [1, 2, 3]; track i) {
+          <ion-card>
+            <ion-card-header>
+              <ion-skeleton-text [animated]="true" style="width: 80%"></ion-skeleton-text>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-skeleton-text [animated]="true" style="width: 100%"></ion-skeleton-text>
+              <ion-skeleton-text [animated]="true" style="width: 60%"></ion-skeleton-text>
+            </ion-card-content>
+          </ion-card>
+        }
+      </ion-list>
     </div>
+  }
 
-    <div *ngIf="allBlogs.length > 0 && displayedBlogs.length === 0" class="ion-text-center ion-padding">
-      <h3>No se encontraron resultados</h3>
-      <p>Intenta con otra búsqueda o filtro.</p>
-    </div>
-
-    <ion-list *ngIf="displayedBlogs.length > 0">
-      <ion-card *ngFor="let blog of displayedBlogs" (click)="viewBlogDetail(blog._id)" button>
-        <ion-card-header>
-          <ion-card-title>{{ blog.title }}</ion-card-title>
-          <ion-card-subtitle>Por: {{ blog.author_id }} | {{ blog.created_at | date:'mediumDate':'es-GT'
-            }}</ion-card-subtitle>
-        </ion-card-header>
-        <ion-card-content>
-          {{ blog.excerpt }}
-          <div class="blog-actions">
-            <ion-button (click)="toggleLikeOnList(blog, $event)" fill="clear" size="small"
-              [color]="blog.currentUserHasLiked ? 'danger' : 'medium'">
-              <ion-icon slot="start" [name]="blog.currentUserHasLiked ? 'heart' : 'heart-outline'"></ion-icon>
-              {{ blog.likes_count }}
-            </ion-button>
-            <ion-button (click)="toggleBookmark(blog._id, $event)" fill="clear" size="small"
-              [color]="isBlogSaved(blog._id) ? 'warning' : 'medium'">
-              <ion-icon slot="icon-only" [name]="isBlogSaved(blog._id) ? 'bookmark' : 'bookmark-outline'"></ion-icon>
-            </ion-button>
-          </div>
-        </ion-card-content>
+  @if (!isLoading) {
+    <div>
+      <ion-card class="create-post-card" (click)="openCreateBlogModal()" button>
+        <ion-item lines="none">
+          <ion-avatar slot="start">
+            <img src="assets/icon/favicon.png" />
+          </ion-avatar>
+          <ion-label>¿En qué estás pensando?</ion-label>
+        </ion-item>
       </ion-card>
-    </ion-list>
-
-  </div>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="6">
+            <ion-item>
+              <ion-select label="Carrera" interface="popover" [(ngModel)]="selectedFilters.career"
+                (ionChange)="onFilterChange()">
+                <ion-select-option value="all">Todas</ion-select-option>
+                @for (career of availableCareers; track career) {
+                  <ion-select-option [value]="career">{{ career
+                  }}</ion-select-option>
+                }
+              </ion-select>
+            </ion-item>
+          </ion-col>
+          <ion-col size="6">
+            <ion-item>
+              <ion-select label="Categoría" interface="popover" [(ngModel)]="selectedFilters.category"
+                (ionChange)="onFilterChange()">
+                <ion-select-option value="all">Todas</ion-select-option>
+                @for (category of availableCategories; track category) {
+                  <ion-select-option [value]="category">{{ category
+                  }}</ion-select-option>
+                }
+              </ion-select>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+      @if (allBlogs.length === 0) {
+        <div class="ion-text-center ion-padding">
+          <h3>¡Bienvenido!</h3>
+          <p>Aún no hay blogs publicados. ¡Sé el primero en escribir uno!</p>
+        </div>
+      }
+      @if (allBlogs.length > 0 && displayedBlogs.length === 0) {
+        <div class="ion-text-center ion-padding">
+          <h3>No se encontraron resultados</h3>
+          <p>Intenta con otra búsqueda o filtro.</p>
+        </div>
+      }
+      @if (displayedBlogs.length > 0) {
+        <ion-list>
+          @for (blog of displayedBlogs; track blog) {
+            <ion-card (click)="viewBlogDetail(blog._id)" button>
+              <ion-card-header>
+                <ion-card-title>{{ blog.title }}</ion-card-title>
+                <ion-card-subtitle>Por: {{ blog.author_id }} | {{ blog.created_at | date:'mediumDate':'es-GT'
+                }}</ion-card-subtitle>
+              </ion-card-header>
+              <ion-card-content>
+                {{ blog.excerpt }}
+                <div class="blog-actions">
+                  <ion-button (click)="toggleLikeOnList(blog, $event)" fill="clear" size="small"
+                    [color]="blog.currentUserHasLiked ? 'danger' : 'medium'">
+                    <ion-icon slot="start" [name]="blog.currentUserHasLiked ? 'heart' : 'heart-outline'"></ion-icon>
+                    {{ blog.likes_count }}
+                  </ion-button>
+                  <ion-button (click)="toggleBookmark(blog._id, $event)" fill="clear" size="small"
+                    [color]="isBlogSaved(blog._id) ? 'warning' : 'medium'">
+                    <ion-icon slot="icon-only" [name]="isBlogSaved(blog._id) ? 'bookmark' : 'bookmark-outline'"></ion-icon>
+                  </ion-button>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          }
+        </ion-list>
+      }
+    </div>
+  }
 
 </ion-content>

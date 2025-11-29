@@ -1,0 +1,18 @@
+{
+    "name": "Blog Universitario UMG",
+    "short_name": "BlogUMG",
+    "description": "Plataforma de blogs para estudiantes de la Universidad Mariano Gálvez",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#3880ff",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "assets/icon/favicon.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}

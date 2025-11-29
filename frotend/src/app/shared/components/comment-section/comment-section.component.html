@@ -1,35 +1,96 @@
 <div class="comments-container">
-  <ion-list-header>Comentarios</ion-list-header>
+  <ion-list-header>
+    <ion-label>Comentarios ({{ allComments.length }})</ion-label>
+  </ion-list-header>
 
-  <ion-item>
-    <ion-textarea
-      label="Añadir un comentario..."
-      [(ngModel)]="newCommentText"
-      [autoGrow]="true"
-      [readonly]="!(isAuthenticated$ | async)"
-      placeholder="{{ (isAuthenticated$ | async) ? 'Escribe algo...' : 'Inicia sesión para comentar' }}">
+  <!-- Input Principal -->
+  <ion-item class="comment-input">
+    <ion-textarea [(ngModel)]="newCommentText" [autoGrow]="true" rows="1" placeholder="Escribe un comentario...">
     </ion-textarea>
-    
-    <ion-button (click)="handleCommentPost()" slot="end" [disabled]="!newCommentText.trim()">
-      <ion-icon name="send-outline" slot="icon-only"></ion-icon>
+    <ion-button (click)="handleCommentPost()" slot="end" fill="clear" [disabled]="!newCommentText.trim()">
+      <ion-icon name="send" slot="icon-only"></ion-icon>
     </ion-button>
   </ion-item>
 
-  <ion-list>
-  <ion-item *ngFor="let comment of comments" lines="none">
-    <ion-avatar slot="start">
-      <img src="assets/icon/favicon.png" />
-    </ion-avatar>
-    <ion-label>
-      <h3>{{ comment.author_id }}</h3>
-      <p>{{ comment.content }}</p>
-    </ion-label>
+  <ion-list class="comments-list">
+    @for (comment of rootComments; track comment._id) {
+    <div class="comment-thread">
+      <!-- Comentario Padre -->
+      <ion-item lines="none" class="comment-item">
+        <ion-avatar slot="start">
+          <img src="https://ionicframework.com/docs/img/demos/avatar.svg" />
+        </ion-avatar>
+        <ion-label class="ion-text-wrap">
+          <div class="comment-header">
+            <h3>Usuario {{ comment.author_id.substring(0, 5) }}...</h3>
+            <span class="date">{{ comment.created_at | date:'shortDate' }}</span>
+          </div>
+          <p>{{ comment.content }}</p>
 
-    <ion-buttons slot="end" *ngIf="canDelete(comment)">
-      <ion-button (click)="presentDeleteConfirm(comment._id)" fill="clear" color="danger">
-        <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    </ion-item>
-</ion-list>
+          <div class="comment-actions">
+            <ion-button fill="clear" size="small" (click)="toggleLike(comment)"
+              [color]="comment.currentUserHasLiked ? 'danger' : 'medium'">
+              <ion-icon [name]="comment.currentUserHasLiked ? 'heart' : 'heart-outline'" slot="start"></ion-icon>
+              {{ comment.likes_count }}
+            </ion-button>
+
+            <ion-button fill="clear" size="small" (click)="toggleReplyBox(comment._id)" color="medium">
+              <ion-icon name="chatbubble-outline" slot="start"></ion-icon>
+              Responder
+            </ion-button>
+
+            @if (canDelete(comment)) {
+            <ion-button fill="clear" size="small" color="medium" (click)="presentDeleteConfirm(comment._id)">
+              <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+            }
+          </div>
+        </ion-label>
+      </ion-item>
+
+      <!-- Input de Respuesta -->
+      @if (replyingTo === comment._id) {
+      <ion-item class="reply-input" lines="none">
+        <ion-textarea [(ngModel)]="replyText" placeholder="Escribe una respuesta..." [autoGrow]="true" rows="1">
+        </ion-textarea>
+        <ion-button (click)="handleReplyPost(comment._id)" slot="end" fill="clear" size="small">
+          Enviar
+        </ion-button>
+      </ion-item>
+      }
+
+      <!-- Respuestas (Hijos) -->
+      <div class="replies-list">
+        @for (reply of getReplies(comment._id); track reply._id) {
+        <ion-item lines="none" class="reply-item">
+          <ion-avatar slot="start" class="small-avatar">
+            <img src="https://ionicframework.com/docs/img/demos/avatar.svg" />
+          </ion-avatar>
+          <ion-label class="ion-text-wrap">
+            <div class="comment-header">
+              <h3>Usuario {{ reply.author_id.substring(0, 5) }}...</h3>
+              <span class="date">{{ reply.created_at | date:'shortDate' }}</span>
+            </div>
+            <p>{{ reply.content }}</p>
+
+            <div class="comment-actions">
+              <ion-button fill="clear" size="small" (click)="toggleLike(reply)"
+                [color]="reply.currentUserHasLiked ? 'danger' : 'medium'">
+                <ion-icon [name]="reply.currentUserHasLiked ? 'heart' : 'heart-outline'" slot="start"></ion-icon>
+                {{ reply.likes_count }}
+              </ion-button>
+
+              @if (canDelete(reply)) {
+              <ion-button fill="clear" size="small" color="medium" (click)="presentDeleteConfirm(reply._id)">
+                <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+              }
+            </div>
+          </ion-label>
+        </ion-item>
+        }
+      </div>
+    </div>
+    }
+  </ion-list>
 </div>

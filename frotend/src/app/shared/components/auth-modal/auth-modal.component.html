@@ -9,107 +9,103 @@
 
 <ion-content class="ion-padding">
 
-  <div *ngIf="view === 'login'">
-    <ion-item>
-      <ion-input label="Correo Electrónico" labelPlacement="floating" type="email" [(ngModel)]="credentials.email"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-input label="Contraseña" labelPlacement="floating" type="password" [(ngModel)]="credentials.password"></ion-input>
-    </ion-item>
+  @if (view === 'login') {
+    <div>
+      <ion-item>
+        <ion-input label="Correo Electrónico" labelPlacement="floating" type="email" [(ngModel)]="credentials.email"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input label="Contraseña" labelPlacement="floating" type="password" [(ngModel)]="credentials.password"></ion-input>
+      </ion-item>
+      <ion-button expand="block" (click)="loginWithEmail()" class="ion-margin-top">
+        Entrar
+      </ion-button>
+      <div class="separator">o continuar con</div>
+      <ion-button expand="block" (click)="loginWithGoogle()">
+        <ion-icon name="logo-google" slot="start"></ion-icon>
+        Continuar con Google
+      </ion-button>
+      <ion-button expand="block" color="facebook" (click)="loginWithFacebook()">
+        <ion-icon name="logo-facebook" slot="start"></ion-icon>
+        Continuar con Facebook
+      </ion-button>
+      <p class="ion-text-center ion-margin-top">
+        ¿No tienes cuenta? <a (click)="changeView('register')">Regístrate</a>
+      </p>
+    </div>
+  }
 
-    <ion-button expand="block" (click)="loginWithEmail()" class="ion-margin-top">
-      Entrar
-    </ion-button>
-
-    <div class="separator">o continuar con</div>
-
-    <ion-button expand="block" (click)="loginWithGoogle()">
-      <ion-icon name="logo-google" slot="start"></ion-icon>
-      Continuar con Google
-    </ion-button>
-    <ion-button expand="block" color="facebook" (click)="loginWithFacebook()">
-      <ion-icon name="logo-facebook" slot="start"></ion-icon>
-      Continuar con Facebook
-    </ion-button>
-
-    <p class="ion-text-center ion-margin-top">
-      ¿No tienes cuenta? <a (click)="changeView('register')">Regístrate</a>
-    </p>
-  </div>
-
- <div *ngIf="view === 'register'">
-
-  <ion-list>
-    <ion-item>
-      <ion-input
-        label="Nombre(s)"
-        labelPlacement="floating"
-        placeholder="Ej: Ana María"
-        type="text"
-        [(ngModel)]="registrationData.firstName">
-      </ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-input
-        label="Apellido(s)"
-        labelPlacement="floating"
-        placeholder="Ej: Pérez López"
-        type="text"
-        [(ngModel)]="registrationData.lastName">
-      </ion-input>
-    </ion-item>
-
-    <ion-item>
-      <ion-input
-        label="Fecha de Nacimiento"
-        labelPlacement="floating"
-        type="date"
-        [(ngModel)]="registrationData.birthDate">
-      </ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-select label="Género (Opcional)" placeholder="Selecciona uno" [(ngModel)]="registrationData.gender">
-        <ion-select-option value="male">Masculino</ion-select-option>
-        <ion-select-option value="female">Femenino</ion-select-option>
-        <ion-select-option value="other">Otro</ion-select-option>
-      </ion-select>
-    </ion-item>
-
-    <ion-item>
-      <ion-input
-        label="Correo Electrónico"
-        labelPlacement="floating"
-        placeholder="tu.correo@email.com"
-        type="email"
-        [(ngModel)]="registrationData.email">
-      </ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-input
-        label="Contraseña"
-        labelPlacement="floating"
-        placeholder="Debe ser segura"
-        type="password"
-        [(ngModel)]="registrationData.password">
-      </ion-input>
-    </ion-item>
-  </ion-list>
-  
-  <ion-button expand="block" (click)="registerWithEmail()" class="ion-margin-top">
-    Registrarse
-  </ion-button>
-  <div class="separator">o registrarse con</div>
-  <ion-button expand="block" (click)="registerWithGoogle()">
-    <ion-icon name="logo-google" slot="start"></ion-icon>
-    Continuar con Google
-  </ion-button>
-  <ion-button expand="block"  (click)="registerWithFacebook()">
-    <ion-icon name="logo-facebook" slot="start"></ion-icon>
-    Continuar con Facebook
-  </ion-button>
-  <p class="ion-text-center ion-margin-top">
-    ¿Ya tienes cuenta? <a (click)="changeView('login')">Inicia Sesión</a>
-  </p>
-</div>
+  @if (view === 'register') {
+    <div>
+      <ion-list>
+        <ion-item>
+          <ion-input
+            label="Nombre(s)"
+            labelPlacement="floating"
+            placeholder="Ej: Ana María"
+            type="text"
+            [(ngModel)]="registrationData.firstName">
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input
+            label="Apellido(s)"
+            labelPlacement="floating"
+            placeholder="Ej: Pérez López"
+            type="text"
+            [(ngModel)]="registrationData.lastName">
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input
+            label="Fecha de Nacimiento"
+            labelPlacement="floating"
+            type="date"
+            [(ngModel)]="registrationData.birthDate">
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-select label="Género (Opcional)" placeholder="Selecciona uno" [(ngModel)]="registrationData.gender">
+            <ion-select-option value="male">Masculino</ion-select-option>
+            <ion-select-option value="female">Femenino</ion-select-option>
+            <ion-select-option value="other">Otro</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-input
+            label="Correo Electrónico"
+            labelPlacement="floating"
+            placeholder="tu.correo@email.com"
+            type="email"
+            [(ngModel)]="registrationData.email">
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input
+            label="Contraseña"
+            labelPlacement="floating"
+            placeholder="Debe ser segura"
+            type="password"
+            [(ngModel)]="registrationData.password">
+          </ion-input>
+        </ion-item>
+      </ion-list>
+      <ion-button expand="block" (click)="registerWithEmail()" class="ion-margin-top">
+        Registrarse
+      </ion-button>
+      <div class="separator">o registrarse con</div>
+      <ion-button expand="block" (click)="registerWithGoogle()">
+        <ion-icon name="logo-google" slot="start"></ion-icon>
+        Continuar con Google
+      </ion-button>
+      <ion-button expand="block"  (click)="registerWithFacebook()">
+        <ion-icon name="logo-facebook" slot="start"></ion-icon>
+        Continuar con Facebook
+      </ion-button>
+      <p class="ion-text-center ion-margin-top">
+        ¿Ya tienes cuenta? <a (click)="changeView('login')">Inicia Sesión</a>
+      </p>
+    </div>
+  }
 
 </ion-content>

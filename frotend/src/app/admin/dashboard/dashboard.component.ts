@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, OnInit } from '@angular/core';
 import { IonicModule} from '@ionic/angular';
 import { AuthService } from 'src/app/core/services/auth';
@@ -11,9 +11,9 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./dashboard.component.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     IonicModule,
-    RouterModule,]
+    RouterModule
+]
 })
 export class DashboardComponent  implements OnInit {
 

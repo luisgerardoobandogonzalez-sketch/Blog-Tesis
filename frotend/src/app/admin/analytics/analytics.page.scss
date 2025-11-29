@@ -1,0 +1,36 @@
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    text-align: center;
+    padding: 15px;
+
+    ion-icon {
+        font-size: 36px;
+        margin-bottom: 10px;
+    }
+
+    h2 {
+        font-size: 2em;
+        font-weight: bold;
+        margin: 5px 0;
+        color: var(--ion-color-dark);
+    }
+
+    p {
+        font-size: 0.9em;
+        color: var(--ion-color-medium);
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+}
+
+.chart-container {
+    height: 300px;
+    position: relative;
+}

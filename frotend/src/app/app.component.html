@@ -1,13 +1,21 @@
 <ion-app>
-  <app-menu *ngIf="authService.isUserOrGuest$ | async"></app-menu>
-  
-  <app-admin-menu *ngIf="authService.isAdmin$ | async"></app-admin-menu>
+  @if (authService.isUserOrGuest$ | async) {
+    <app-menu></app-menu>
+  }
+
+  @if (authService.isAdmin$ | async) {
+    <app-admin-menu></app-admin-menu>
+  }
 
   <div class="ion-page" id="main-content">
-    
-    <app-header *ngIf="authService.isUserOrGuest$ | async"></app-header>
-    
-    <app-admin-header *ngIf="authService.isAdmin$ | async"></app-admin-header>
+
+    @if (authService.isUserOrGuest$ | async) {
+      <app-header></app-header>
+    }
+
+    @if (authService.isAdmin$ | async) {
+      <app-admin-header></app-admin-header>
+    }
     <ion-content>
       <ion-router-outlet></ion-router-outlet>
     </ion-content>

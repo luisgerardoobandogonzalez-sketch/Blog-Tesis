@@ -5,16 +5,42 @@
       <mat-icon matListItemIcon>home</mat-icon>
       <span matListItemTitle>Inicio</span>
     </a>
-    <a mat-list-item routerLink="/profile" routerLinkActive="active-list-item" (click)="closeMenu()"
-      *ngIf="isAuthenticated$ | async">
+    @if (isAuthenticated$ | async) {
+    <a mat-list-item routerLink="/profile" routerLinkActive="active-list-item" (click)="closeMenu()">
       <mat-icon matListItemIcon>person</mat-icon>
       <span matListItemTitle>Mi Perfil</span>
     </a>
-    <a mat-list-item routerLink="/favorites" routerLinkActive="active-list-item" (click)="closeMenu()"
-      *ngIf="isAuthenticated$ | async">
-      <mat-icon matListItemIcon>bookmarks</mat-icon>
-      <span matListItemTitle>Guardados</span>
-    </a>
+    }
+    @if (isAuthenticated$ | async) {
+    <ion-item routerLink="/favorites" routerDirection="root" lines="none" detail="false" routerLinkActive="selected">
+      <ion-icon slot="start" name="bookmark-outline"></ion-icon>
+      <ion-label>Guardados</ion-label>
+    </ion-item>
+
+    <ion-item routerLink="/leaderboard" routerDirection="root" lines="none" detail="false" routerLinkActive="selected">
+      <ion-icon slot="start" name="trophy-outline"></ion-icon>
+      <ion-label>Clasificación</ion-label>
+    </ion-item>
+
+    <ion-item routerLink="/notifications" routerDirection="root" lines="none" detail="false"
+      routerLinkActive="selected">
+      <ion-icon slot="start" name="notifications-outline"></ion-icon>
+      <ion-label>Notificaciones</ion-label>
+      @if ((unreadNotifications$ | async)! > 0) {
+      <ion-badge slot="end" color="danger">{{ unreadNotifications$ | async }}</ion-badge>
+      }
+    </ion-item>
+
+    <ion-item routerLink="/chat" routerDirection="root" lines="none" detail="false" routerLinkActive="selected">
+      <ion-icon slot="start" name="chatbubbles-outline"></ion-icon>
+      <ion-label>Mensajes</ion-label>
+    </ion-item>
+
+    <ion-item routerLink="/tags" routerDirection="root" lines="none" detail="false" routerLinkActive="selected">
+      <ion-icon slot="start" name="pricetags-outline"></ion-icon>
+      <ion-label>Explorar Tags</ion-label>
+    </ion-item>
+    }
 
     <mat-divider></mat-divider>
 
@@ -23,17 +49,20 @@
       <mat-icon matListItemIcon>edit_square</mat-icon>
       <span matListItemTitle>Escribir Blog</span>
     </a>
-    <a mat-list-item routerLink="/settings" routerLinkActive="active-list-item" (click)="closeMenu()"
-      *ngIf="isAuthenticated$ | async">
+    @if (isAuthenticated$ | async) {
+    <a mat-list-item routerLink="/settings" routerLinkActive="active-list-item" (click)="closeMenu()">
       <mat-icon matListItemIcon>settings</mat-icon>
       <span matListItemTitle>Configuración</span>
     </a>
+    }
   </mat-nav-list>
 
-  <div class="logout-section" *ngIf="isAuthenticated$ | async">
+  @if (isAuthenticated$ | async) {
+  <div class="logout-section">
     <a mat-list-item (click)="logout()">
       <mat-icon matListItemIcon color="warn">logout</mat-icon>
       <span matListItemTitle>Cerrar Sesión</span>
     </a>
   </div>
+  }
 </ion-menu>

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/core/services/auth';
-import { NotificationService } from 'src/app/shared/services/notification';
+import { NotificationService } from 'src/app/shared/services/notification.service';
 import { Models } from 'src/app/shared/models/models';
 
 @Component({
@@ -24,22 +24,39 @@ export class NotificationsPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    const currentUser = this.authService.getUserProfile();
-    if (currentUser) {
-      this.notificationService.getNotifications(currentUser.id).subscribe(data => {
-        this.notifications = data;
-        this.isLoading = false;
-      });
-    }
+    this.loadNotifications();
+  }
+
+  loadNotifications() {
+    this.isLoading = true;
+    this.notificationService.getNotifications().subscribe(data => {
+      this.notifications = data;
+      this.isLoading = false;
+    });
+  }
+
+  doRefresh(event: any) {
+    this.notificationService.getNotifications().subscribe(data => {
+      this.notifications = data;
+      event.target.complete();
+    });
+  }
+
+  markAllRead() {
+    this.notificationService.markAllAsRead().subscribe(() => {
+      this.notifications.forEach(n => n.is_read = true);
+    });
   }
 
   handleNotificationClick(notification: Models.Notification.Notification) {
-    // 1. Marca la notificación como leída (en la simulación y en la UI)
-    this.notificationService.markAsRead(notification._id).subscribe();
-    notification.is_read = true;
+    if (!notification.is_read) {
+      this.notificationService.markAsRead(notification._id).subscribe();
+      notification.is_read = true;
+    }
 
-    // 2. Navega a la URL asociada con la notificación
-    this.router.navigateByUrl(notification.data.url);
+    if (notification.data && notification.data.url) {
+      this.router.navigateByUrl(notification.data.url);
+    }
   }
 
   getIconForType(type: string): string {
@@ -47,7 +64,20 @@ export class NotificationsPage implements OnInit {
       case 'like': return 'heart';
       case 'comment': return 'chatbubble';
       case 'follow': return 'person-add';
+      case 'level_up': return 'trending-up';
+      case 'badge_earned': return 'ribbon';
       default: return 'notifications';
+    }
+  }
+
+  getColorForType(type: string): string {
+    switch (type) {
+      case 'like': return 'danger';
+      case 'comment': return 'primary';
+      case 'follow': return 'success';
+      case 'level_up': return 'warning';
+      case 'badge_earned': return 'tertiary';
+      default: return 'medium';
     }
   }
 }

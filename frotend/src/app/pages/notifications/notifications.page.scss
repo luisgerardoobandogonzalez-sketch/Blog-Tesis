@@ -1,10 +1,65 @@
-  .unread {
-    --background: var(--ion-color-light);
-    font-weight: bold;
+.notif-icon-container {
+  position: relative;
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--ion-color-light);
+  border-radius: 50%;
+
+  ion-icon {
+    font-size: 20px;
   }
+
   .unread-dot {
-    width: 8px;
-    height: 8px;
-    background: var(--ion-color-primary);
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    background: var(--ion-color-danger);
     border-radius: 50%;
+    border: 2px solid var(--ion-background-color);
   }
+}
+
+ion-item.unread {
+  --background: rgba(var(--ion-color-primary-rgb), 0.05);
+
+  .notif-message {
+    font-weight: bold;
+    color: var(--ion-color-dark);
+  }
+}
+
+.notif-message {
+  white-space: normal;
+  font-size: 0.95em;
+  margin-bottom: 4px;
+}
+
+.notif-date {
+  font-size: 0.8em;
+  color: var(--ion-color-medium);
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 70%;
+  color: var(--ion-color-medium);
+
+  ion-icon {
+    font-size: 64px;
+    margin-bottom: 15px;
+    opacity: 0.5;
+  }
+
+  p {
+    font-size: 1.1em;
+  }
+}

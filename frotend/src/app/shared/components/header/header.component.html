@@ -1,25 +1,21 @@
-<ng-container *ngIf="!isSearchActive; else searchToolbar">
-
+@if (!isSearchActive) {
   <ion-header>
     <ion-toolbar>
       <ion-buttons slot="start">
         <ion-menu-button></ion-menu-button>
       </ion-buttons>
       <ion-title>Mi Blog</ion-title>
-
       <ion-buttons slot="end">
-        <ng-container *ngIf="!(isAuthenticated$ | async)">
+        @if (!(isAuthenticated$ | async)) {
           <ion-button (click)="openAuthModal()">
             <ion-icon slot="start" name="log-in-outline"></ion-icon>
             Iniciar Sesión
           </ion-button>
-        </ng-container>
-
-        <ng-container *ngIf="isAuthenticated$ | async">
+        }
+        @if (isAuthenticated$ | async) {
           <ion-button (click)="toggleSearch()">
             <ion-icon slot="icon-only" name="search-outline"></ion-icon>
           </ion-button>
-
           <ion-button (click)="openCreateBlogModal()">
             <ion-icon slot="icon-only" name="create-outline"></ion-icon>
           </ion-button>
@@ -32,14 +28,11 @@
           <ion-button (click)="logout()" color="danger">
             <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
           </ion-button>
-        </ng-container>
+        }
       </ion-buttons>
     </ion-toolbar>
   </ion-header>
-
-</ng-container>
-
-<ng-template #searchToolbar>
+} @else {
   <ion-header>
     <ion-toolbar>
       <ion-buttons slot="start">
@@ -47,7 +40,7 @@
           <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
         </ion-button>
       </ion-buttons>
-      <ion-searchbar 
+      <ion-searchbar
         placeholder="Buscar en el blog..."
         (ionInput)="onSearch($event)"
         [debounce]="300"
@@ -55,4 +48,5 @@
       </ion-searchbar>
     </ion-toolbar>
   </ion-header>
-</ng-template>
+}
+

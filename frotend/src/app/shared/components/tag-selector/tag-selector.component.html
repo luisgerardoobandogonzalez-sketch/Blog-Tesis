@@ -1,0 +1,46 @@
+<div class="tag-selector-container">
+  <ion-item lines="none" class="search-item">
+    <ion-input placeholder="Añadir etiquetas (ej. ionic, angular)..." [(ngModel)]="searchTerm"
+      (ionInput)="onSearchChange($event)" (keyup.enter)="onEnter()">
+    </ion-input>
+    <ion-button slot="end" fill="clear" (click)="onEnter()" [disabled]="!searchTerm">
+      <ion-icon name="add-circle-outline"></ion-icon>
+    </ion-button>
+  </ion-item>
+
+  <!-- Sugerencias de autocompletado -->
+  @if (suggestedTags.length > 0) {
+  <ion-list class="suggestions-list">
+    @for (tag of suggestedTags; track tag.id) {
+    <ion-item button (click)="addTag(tag.name)" lines="none">
+      <ion-label>{{ tag.name }}</ion-label>
+      <ion-note slot="end">{{ tag.count }} posts</ion-note>
+    </ion-item>
+    }
+  </ion-list>
+  }
+
+  <!-- Tags seleccionados -->
+  <div class="selected-tags">
+    @for (tag of selectedTags; track tag) {
+    <ion-chip color="primary" mode="ios">
+      <ion-label>{{ tag }}</ion-label>
+      <ion-icon name="close-circle" (click)="removeTag(tag)"></ion-icon>
+    </ion-chip>
+    }
+  </div>
+
+  <!-- Tags populares (sugerencias rápidas) -->
+  @if (popularTags.length > 0 && selectedTags.length === 0) {
+  <div class="popular-tags">
+    <p class="section-title">Populares:</p>
+    <div class="tags-cloud">
+      @for (tag of popularTags; track tag.id) {
+      <ion-chip outline color="medium" (click)="addTag(tag.name)">
+        {{ tag.name }}
+      </ion-chip>
+      }
+    </div>
+  </div>
+  }
+</div>

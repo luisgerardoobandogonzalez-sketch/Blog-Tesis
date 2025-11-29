@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { IonicModule } from '@ionic/angular';
 import { AuthService } from 'src/app/core/services/auth';
 
@@ -8,7 +8,7 @@ import { AuthService } from 'src/app/core/services/auth';
   templateUrl: './admin-header.component.html',
   styleUrls: ['./admin-header.component.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule]
+  imports: [IonicModule]
 })
 export class AdminHeaderComponent {
 

@@ -1,0 +1,173 @@
+.profile-avatar {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 10px;
+    border: 3px solid var(--ion-color-primary);
+}
+
+.profile-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.profile-career {
+    color: var(--ion-color-medium);
+    margin: 5px 0;
+}
+
+.profile-bio {
+    text-align: center;
+    font-style: italic;
+    color: var(--ion-color-dark);
+    background: var(--ion-color-light);
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+}
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 10px 0;
+
+    a {
+        font-size: 24px;
+        color: var(--ion-color-medium);
+        transition: color 0.2s;
+
+        &:hover {
+            color: var(--ion-color-primary);
+        }
+    }
+}
+
+.rating-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.profile-email {
+    color: var(--ion-color-medium);
+    font-size: 0.9rem;
+}
+
+.profile-stats {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+    padding: 15px 0;
+    border-top: 1px solid var(--ion-color-light);
+    border-bottom: 1px solid var(--ion-color-light);
+
+    .stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        strong {
+            font-size: 1.2rem;
+            color: var(--ion-color-dark);
+        }
+
+        span {
+            font-size: 0.8rem;
+            color: var(--ion-color-medium);
+            text-transform: uppercase;
+        }
+    }
+}
+
+// Gamification Styles
+.gamification-section {
+    background: var(--ion-color-light);
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.level-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    color: white;
+    font-weight: bold;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    ion-icon {
+        font-size: 1.2em;
+    }
+}
+
+.xp-progress-container {
+    margin-bottom: 15px;
+
+    .xp-info {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8em;
+        margin-bottom: 5px;
+        color: var(--ion-color-medium);
+
+        .xp-current {
+            font-weight: bold;
+            color: var(--ion-color-primary);
+        }
+    }
+
+    ion-progress-bar {
+        height: 8px;
+        border-radius: 4px;
+    }
+}
+
+.badges-container {
+    h3 {
+        font-size: 1em;
+        margin-bottom: 10px;
+        color: var(--ion-color-dark);
+    }
+
+    .badges-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 10px;
+    }
+
+    .badge-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+
+        .badge-icon {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 5px;
+
+            ion-icon {
+                font-size: 24px;
+                color: var(--ion-color-warning);
+            }
+        }
+
+        .badge-name {
+            font-size: 0.7em;
+            color: var(--ion-color-medium);
+            line-height: 1.2;
+        }
+    }
+}

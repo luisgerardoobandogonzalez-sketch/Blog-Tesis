@@ -1,0 +1,52 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title>Mensajes</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    @if (isLoading) {
+    <div class="ion-text-center ion-padding">
+        <ion-spinner></ion-spinner>
+    </div>
+    }
+
+    @if (!isLoading) {
+    <ion-list>
+        @for (item of chats; track item.chat.id) {
+        <ion-item [routerLink]="['/chat', item.chat.id]" detail="true">
+            <ion-avatar slot="start">
+                <img [src]="item.otherUser?.profile_picture_url || 'assets/images/avatar.png'" />
+            </ion-avatar>
+            <ion-label>
+                <h2>{{ item.otherUser?.firstName || 'Usuario Desconocido' }} {{ item.otherUser?.lastName }}</h2>
+                <p class="last-message">
+                    @if (item.chat.lastMessage) {
+                    <span
+                        [class.unread]="!item.chat.lastMessage.isRead && item.chat.lastMessage.senderId !== currentUser?.id">
+                        {{ item.chat.lastMessage.senderId === currentUser?.id ? 'Tú: ' : '' }}{{
+                        item.chat.lastMessage.content }}
+                    </span>
+                    } @else {
+                    <em>Sin mensajes</em>
+                    }
+                </p>
+            </ion-label>
+            <ion-note slot="end" class="time-note">
+                {{ item.chat.updatedAt | date:'shortTime' }}
+            </ion-note>
+        </ion-item>
+        }
+        @if (chats.length === 0) {
+        <div class="empty-state ion-text-center ion-padding">
+            <ion-icon name="chatbubbles-outline" size="large"></ion-icon>
+            <p>No tienes conversaciones activas.</p>
+            <p>Visita el perfil de un usuario para iniciar un chat.</p>
+        </div>
+        }
+    </ion-list>
+    }
+</ion-content>

@@ -8,78 +8,77 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <div *ngIf="userProfile" class="profile-container">
-    
-    <ion-avatar class="profile-avatar">
-      <img [src]="userProfile.profile_picture_url || 'assets/icon/favicon.png'" alt="Foto de perfil">
-    </ion-avatar>
-
-    <h1 class="profile-name">{{ userProfile.firstName }} {{ userProfile.lastName }}</h1>
-   
-
-    <div class="profile-stats">
-      <div class="stat-item">
-        <strong>{{ userBlogs.length }}</strong>
-        <span>Posts</span>
+  @if (userProfile) {
+    <div class="profile-container">
+      <ion-avatar class="profile-avatar">
+        <img [src]="userProfile.profile_picture_url || 'assets/icon/favicon.png'" alt="Foto de perfil">
+      </ion-avatar>
+      <h1 class="profile-name">{{ userProfile.firstName }} {{ userProfile.lastName }}</h1>
+      <div class="profile-stats">
+        <div class="stat-item">
+          <strong>{{ userBlogs.length }}</strong>
+          <span>Posts</span>
+        </div>
+        <div class="stat-item">
+          <strong>{{ followerCount }}</strong>
+          <span>Seguidores</span>
+        </div>
+        <div class="stat-item">
+          <strong>{{ followingCount }}</strong>
+          <span>Siguiendo</span>
+        </div>
       </div>
-      <div class="stat-item">
-        <strong>{{ followerCount }}</strong>
-        <span>Seguidores</span>
-      </div>
-      <div class="stat-item">
-        <strong>{{ followingCount }}</strong>
-        <span>Siguiendo</span>
-      </div>
+      <ion-button expand="block" fill="outline" class="ion-margin-top">Editar Perfil</ion-button>
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Información Personal</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list>
+            <ion-item>
+              <ion-label>
+                <h2>Nombre</h2>
+                <p>{{ userProfile.firstName }}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h2>Apellido</h2>
+                <p>{{ userProfile.lastName }}</p>
+              </ion-label>
+            </ion-item>
+            @if (userProfile.gender) {
+              <ion-item>
+                <ion-label>
+                  <h2>Género</h2>
+                  <p>{{ userProfile.gender | genderTranslate }}</p>
+                </ion-label>
+              </ion-item>
+            }
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Mis Publicaciones</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          @if (userBlogs.length > 0) {
+            <ion-list>
+              @for (blog of userBlogs; track blog) {
+                <ion-item [routerLink]="['/blog', blog._id]" button>
+                  <ion-label>
+                    <h3>{{ blog.title }}</h3>
+                    <p>{{ blog.created_at | date:'mediumDate':'es-GT' }}</p>
+                  </ion-label>
+                </ion-item>
+              }
+            </ion-list>
+          } @else {
+            <p>Aún no has escrito ningún blog.</p>
+          }
+        </ion-card-content>
+      </ion-card>
     </div>
-
-    <ion-button expand="block" fill="outline" class="ion-margin-top">Editar Perfil</ion-button>
-    
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Información Personal</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-list>
-          <ion-item>
-            <ion-label>
-              <h2>Nombre</h2>
-              <p>{{ userProfile.firstName }}</p>
-            </ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-label>
-              <h2>Apellido</h2>
-              <p>{{ userProfile.lastName }}</p>
-            </ion-label>
-          </ion-item>
-          <ion-item *ngIf="userProfile.gender">
-            <ion-label>
-              <h2>Género</h2>
-              <p>{{ userProfile.gender | genderTranslate }}</p>
-            </ion-label>
-          </ion-item>
-        </ion-list>
-      </ion-card-content>
-    </ion-card>
-
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Mis Publicaciones</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-list *ngIf="userBlogs.length > 0; else noBlogs">
-          <ion-item *ngFor="let blog of userBlogs" [routerLink]="['/blog', blog._id]" button>
-            <ion-label>
-              <h3>{{ blog.title }}</h3>
-              <p>{{ blog.created_at | date:'mediumDate':'es-GT' }}</p>
-            </ion-label>
-          </ion-item>
-        </ion-list>
-        <ng-template #noBlogs>
-          <p>Aún no has escrito ningún blog.</p>
-        </ng-template>
-      </ion-card-content>
-    </ion-card>
-
-  </div>
+  }
 </ion-content>

@@ -8,22 +8,26 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <div *ngIf="isLoading">
+  @if (isLoading) {
+  <div>
     <ion-skeleton-text [animated]="true" style="width: 80%; height: 30px;"></ion-skeleton-text>
     <ion-skeleton-text [animated]="true" style="width: 50%;"></ion-skeleton-text>
     <br>
     <ion-skeleton-text [animated]="true" style="width: 100%; height: 200px;"></ion-skeleton-text>
   </div>
+  }
 
-  <div *ngIf="!isLoading && blog">
+  @if (!isLoading && blog) {
+  <div>
     <ion-fab vertical="top" horizontal="end" slot="fixed">
-      <ion-fab-button *ngIf="currentUser && currentUser.id === blog.author_id" (click)="openEditModal()">
+      @if (currentUser && currentUser.id === blog.author_id) {
+      <ion-fab-button (click)="openEditModal()">
         <ion-icon name="pencil-outline"></ion-icon>
       </ion-fab-button>
+      }
     </ion-fab>
     <h1>{{ blog.title }}</h1>
     <p class="subtitle">Por: {{ blog.author_id }} | Publicado el: {{ blog.created_at | date:'longDate':'es-GT' }}</p>
-
     <div class="actions-toolbar">
       <ion-button (click)="toggleLike()" fill="clear" [color]="blog.currentUserHasLiked ? 'danger' : 'medium'">
         <ion-icon slot="start" [name]="blog.currentUserHasLiked ? 'heart' : 'heart-outline'"></ion-icon>
@@ -33,16 +37,21 @@
         <ion-icon slot="start" name="chatbubble-outline"></ion-icon>
         {{ blog.comments_count }}
       </ion-button>
+      <ion-button (click)="exportToPDF()" fill="clear" color="medium">
+        <ion-icon slot="start" name="download-outline"></ion-icon>
+        PDF
+      </ion-button>
     </div>
-
-    <div *ngIf="blog.images && blog.images.length > 0">
-      <ion-img *ngFor="let imageUrl of blog.images" [src]="imageUrl" alt="Imagen del blog"></ion-img>
+    @if (blog.images && blog.images.length > 0) {
+    <div>
+      @for (imageUrl of blog.images; track imageUrl) {
+      <ion-img [src]="imageUrl" alt="Imagen del blog"></ion-img>
+      }
     </div>
-
-    <div [innerHTML]="sanitizedContent" class="blog-content"></div>
-
+    }
+    <div [innerHTML]="sanitizedContent" id="blog-content" class="blog-content"></div>
     <ion-item-divider></ion-item-divider>
     <app-comment-section [blogId]="blog._id" [blogAuthorId]="blog.author_id"></app-comment-section>
-
   </div>
+  }
 </ion-content>

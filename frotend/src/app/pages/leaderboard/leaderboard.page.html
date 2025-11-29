@@ -1,0 +1,86 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Tabla de Clasificación</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  @if (isLoading) {
+  <div class="ion-text-center ion-padding">
+    <ion-spinner></ion-spinner>
+    <p>Cargando clasificación...</p>
+  </div>
+  } @else {
+  <div class="top-three ion-padding" *ngIf="leaderboard.length > 0">
+    <!-- 2nd Place -->
+    @if (leaderboard[1]) {
+    <div class="podium-item second">
+      <div class="avatar-container">
+        <ion-avatar>
+          <img src="assets/images/avatar.png" />
+        </ion-avatar>
+        <div class="rank-badge silver">2</div>
+      </div>
+      <span class="username">{{ leaderboard[1].username }}</span>
+      <span class="xp">{{ leaderboard[1].total_xp }} XP</span>
+    </div>
+    }
+
+    <!-- 1st Place -->
+    @if (leaderboard[0]) {
+    <div class="podium-item first">
+      <div class="icon-crown">
+        <ion-icon name="sunny" color="warning"></ion-icon>
+      </div>
+      <div class="avatar-container">
+        <ion-avatar>
+          <img src="assets/images/avatar.png" />
+        </ion-avatar>
+        <div class="rank-badge gold">1</div>
+      </div>
+      <span class="username">{{ leaderboard[0].username }}</span>
+      <span class="xp">{{ leaderboard[0].total_xp }} XP</span>
+    </div>
+    }
+
+    <!-- 3rd Place -->
+    @if (leaderboard[2]) {
+    <div class="podium-item third">
+      <div class="avatar-container">
+        <ion-avatar>
+          <img src="assets/images/avatar.png" />
+        </ion-avatar>
+        <div class="rank-badge bronze">3</div>
+      </div>
+      <span class="username">{{ leaderboard[2].username }}</span>
+      <span class="xp">{{ leaderboard[2].total_xp }} XP</span>
+    </div>
+    }
+  </div>
+
+  <ion-list class="ranking-list">
+    @for (entry of leaderboard.slice(3); track entry.user_id) {
+    <ion-item button [routerLink]="['/user', entry.user_id]">
+      <div slot="start" class="rank-number">{{ entry.rank }}</div>
+      <ion-avatar slot="start">
+        <img src="assets/images/avatar.png" />
+      </ion-avatar>
+      <ion-label>
+        <h2>{{ entry.username }}</h2>
+        <p>Nivel {{ entry.level }} • {{ entry.badges_count }} insignias</p>
+      </ion-label>
+      <div slot="end" class="xp-badge">
+        {{ entry.total_xp }} XP
+      </div>
+    </ion-item>
+    }
+  </ion-list>
+  }
+</ion-content>
